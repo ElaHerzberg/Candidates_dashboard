@@ -3,480 +3,330 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>תובנות מעמיקות — תהליך מיון</title>
+<title>תובנות מעמיקות</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
-:root{
-  --bg:#07090f; --s1:#0d1018; --s2:#131825; --s3:#192033;
-  --border:#1d2640; --text:#d8e4f8; --muted:#5a6e9a;
-  --B:#4db8ff; --A:#3ecf8e; --JR:#f5c842; --FAIL:#ff5f5f; --COND:#b47fff; --NONE:#3a4a6a;
-}
+:root{--bg:#0a0c10;--s1:#0e1118;--s2:#141821;--border:#1e2436;--text:#dde4f5;--muted:#5c6a8a;
+  --JR:#f5c842;--A:#3ecf8e;--BG:#4db8ff;--FAIL:#ff5f72;--COND:#c47fff;--TECH:#f4845f;--INST:#3ecf8e;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Heebo',sans-serif;padding:2rem 1.2rem 6rem;min-height:100vh;}
-body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 70% 50% at 15% 10%,rgba(77,184,255,.04) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 90%,rgba(62,207,142,.03) 0%,transparent 60%);pointer-events:none;}
-
-/* Header */
-.hdr{max-width:1280px;margin:0 auto 2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;}
-h1{font-size:clamp(1.3rem,3vw,1.9rem);font-weight:900;letter-spacing:-.03em;}
-h1 span{color:var(--B);}
-.sub{color:var(--muted);font-size:.85rem;margin-top:.3rem;}
-.badge-meta{display:flex;gap:.6rem;flex-wrap:wrap;}
-.bm{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:.3rem .8rem;font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--muted);}
-
-/* Layout */
-.wrap{max-width:1280px;margin:0 auto;}
-.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:1.1rem;}
-.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.1rem;}
-.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.1rem;}
-.full{grid-column:1/-1;}
-
-/* Cards */
-.card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:1.4rem 1.6rem 1.1rem;position:relative;overflow:hidden;transition:border-color .2s;}
-.card:hover{border-color:#2a3a5a;}
-.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0;}
-.bB::after{background:linear-gradient(90deg,var(--B),#2196f3);}
-.bA::after{background:linear-gradient(90deg,var(--A),#0a9e6a);}
-.bJ::after{background:linear-gradient(90deg,var(--JR),#e0a800);}
-.bF::after{background:linear-gradient(90deg,var(--FAIL),#c0392b);}
-.bC::after{background:linear-gradient(90deg,var(--COND),#6c3fbf);}
-.bM::after{background:linear-gradient(90deg,var(--B),var(--A),var(--JR),var(--FAIL));}
-
-.ct{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1.1rem;}
-.ch{position:relative;}
-
-/* Insight boxes */
-.ins{margin-top:1rem;padding:.75rem 1rem;border-radius:0 10px 10px 0;font-size:.82rem;color:#9ab0d0;line-height:1.65;border-right:2px solid var(--B);}
-.ins strong{color:var(--text);}
-.ins.iA{border-color:var(--A);} .ins.iJ{border-color:var(--JR);}
-.ins.iF{border-color:var(--FAIL);} .ins.iC{border-color:var(--COND);}
-.ins.iM{border-color:#5a7aaa;}
-
-/* Section headers */
-.sec{max-width:1280px;margin:2.2rem auto .9rem;display:flex;align-items:center;gap:.8rem;}
-.sec-n{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;color:var(--B);opacity:.6;}
-.sec-t{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'JetBrains Mono',monospace;}
-.sec::after{content:'';flex:1;height:1px;background:var(--border);}
-
-/* Stat grid */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.9rem;margin-bottom:1.2rem;}
-.stat{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:1.1rem .9rem;text-align:center;}
+body{background:var(--bg);background-image:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(77,184,255,.04),transparent 55%),radial-gradient(ellipse 40% 35% at 5% 80%,rgba(244,132,95,.04),transparent 50%);color:var(--text);font-family:'Heebo',sans-serif;padding:2.2rem 1.4rem 5rem;min-height:100vh;}
+.wrap{max-width:1260px;margin:0 auto;}
+header{border-bottom:1px solid var(--border);padding-bottom:1.4rem;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;}
+h1{font-size:clamp(1.4rem,3vw,2rem);font-weight:900;letter-spacing:-.03em;}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--BG),var(--A));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.meta{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--muted);text-align:left;}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.9rem;margin-bottom:1.4rem;}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center;}
 .stat-n{font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;}
 .stat-l{font-size:.72rem;color:var(--muted);margin-top:.3rem;}
-.stat-s{font-size:.62rem;color:var(--muted);opacity:.7;margin-top:.15rem;}
-
-/* Pipeline flow viz */
-.pipeline{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:.5rem;}
-.pl-stage{min-width:160px;flex:1;}
-.pl-head{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:.5rem;}
-.pl-bars{display:flex;flex-direction:column;gap:3px;height:240px;}
-.pl-bar{border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.88);cursor:default;transition:filter .15s;}
-.pl-bar:hover{filter:brightness(1.15);}
-.pl-arrow{display:flex;align-items:center;justify-content:center;width:24px;color:var(--border);font-size:1.1rem;align-self:center;}
-
-/* Finding cards */
+.stat-s{font-size:.62rem;color:var(--muted);opacity:.65;margin-top:.12rem;}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:1.1rem;}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.1rem;}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem 1.1rem;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;}
+.cBG::before{background:linear-gradient(90deg,var(--BG),#1e90e8);}
+.cA::before{background:linear-gradient(90deg,var(--A),#0a9e65);}
+.cJR::before{background:linear-gradient(90deg,var(--JR),#c8a000);}
+.cF::before{background:linear-gradient(90deg,var(--FAIL),#c0283a);}
+.cT::before{background:linear-gradient(90deg,var(--TECH),#d4603a);}
+.cI::before{background:linear-gradient(90deg,var(--INST),#0a9e65);}
+.cM::before{background:linear-gradient(90deg,var(--BG),var(--A),var(--JR),var(--FAIL));}
+.card.full{grid-column:1/-1;}
+.ct{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1.1rem;}
+.ch{position:relative;}
+.ins{margin-top:.9rem;padding:.7rem 1rem;border-radius:0 8px 8px 0;border-right:2px solid var(--BG);background:var(--s2);font-size:.81rem;color:#8898b8;line-height:1.6;}
+.ins strong{color:var(--text);}
+.ins.iA{border-color:var(--A);} .ins.iJR{border-color:var(--JR);} .ins.iF{border-color:var(--FAIL);}
+.ins.iT{border-color:var(--TECH);} .ins.iI{border-color:var(--INST);}
+.sec{display:flex;align-items:center;gap:.7rem;margin:2rem 0 .9rem;}
+.sec-n{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;color:var(--BG);opacity:.5;}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+/* Findings */
 .finding{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;position:relative;}
-.finding::before{content:'⚡';position:absolute;top:.9rem;left:1rem;font-size:1rem;opacity:.4;}
-.finding-title{font-weight:800;font-size:.95rem;margin-bottom:.5rem;padding-left:1.8rem;}
-.finding-body{font-size:.82rem;color:#8ea8cc;line-height:1.65;padding-left:1.8rem;}
-.finding-body strong{color:var(--text);}
+.finding::before{font-size:1rem;position:absolute;top:.9rem;left:1rem;content:'💡';}
 .finding.alert::before{content:'🔴';}
 .finding.positive::before{content:'🟢';}
-.finding.insight::before{content:'💡';}
-.finding.warning::before{content:'⚠️';}
-
-/* Score heatmap */
-.heatmap{display:grid;gap:3px;}
+.finding.warn::before{content:'⚠️';}
+.finding.key::before{content:'🔑';}
+.f-title{font-weight:800;font-size:.92rem;margin-bottom:.5rem;padding-left:1.6rem;}
+.f-body{font-size:.8rem;color:#6878a8;line-height:1.65;padding-left:1.6rem;}
+.f-body strong{color:var(--text);}
+/* Heatmap */
+.hm-wrap{overflow-x:auto;padding:.5rem 0;}
 .hm-row{display:flex;gap:3px;align-items:center;}
-.hm-label{font-size:.72rem;color:var(--muted);width:90px;text-align:right;padding-left:.5rem;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
-.hm-cell{height:32px;border-radius:4px;flex:1;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;cursor:default;transition:transform .1s;}
-.hm-cell:hover{transform:scale(1.05);}
+.hm-label{font-size:.7rem;color:var(--muted);width:100px;text-align:right;padding-left:.4rem;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.hm-cell{height:34px;border-radius:5px;flex:1;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;cursor:default;transition:transform .1s;}
+.hm-cell:hover{transform:scale(1.06);}
 .hm-col-label{font-size:.68rem;color:var(--muted);text-align:center;padding:.3rem .2rem;font-family:'JetBrains Mono',monospace;}
-
-@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr;}.pipeline{flex-direction:column;}.pl-stage{min-width:auto;}}
+/* Rec boxes */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.9rem;margin-top:.6rem;}
+.rec{border-radius:10px;padding:1.1rem;border:1px solid;}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
-<div class="hdr">
-  <div>
-    <h1>תובנות מעמיקות — <span>תהליך המיון המלא</span></h1>
-    <div class="sub">מבחן → ראיון טכנולוגי → ראיון הדרכתי · ניתוח 224 מועמדים</div>
-  </div>
-  <div class="badge-meta">
-    <span class="bm">224 מועמדים</span>
-    <span class="bm">3 שלבי מיון</span>
-    <span class="bm">12 מסלולים שונים</span>
-  </div>
-</div>
-
 <div class="wrap">
+<header>
+  <div>
+    <h1><em>תובנות מעמיקות</em> — מיון מדריכים</h1>
+    <p style="color:var(--muted);font-size:.84rem;margin-top:.3rem">ניתוח משולב: מבחן + ראיון טכנולוגי + ראיון הדרכתי · ג'וניור &lt; א' &lt; ב'/ג'</p>
+  </div>
+  <div class="meta">224 מועמדים · 49 ראיון טכנולוגי · 103 ראיון הדרכתי</div>
+</header>
 
-<!-- Stats -->
-<div class="stat-grid">
-  <div class="stat"><div class="stat-n" style="color:var(--B)">48%</div><div class="stat-l">שיעור מעבר ב'/ג' מבחן→ראיון</div><div class="stat-s">מ-95 מועמדים ל-46</div></div>
-  <div class="stat"><div class="stat-n" style="color:var(--FAIL)">13%</div><div class="stat-l">נפלו מב'/ג' לכשל</div><div class="stat-s">12 מתוך 95 שעברו מבחן</div></div>
-  <div class="stat"><div class="stat-n" style="color:var(--A)">87%</div><div class="stat-l">מעברי א' שמרו רמה</div><div class="stat-s">הקבוצה הכי יציבה</div></div>
-  <div class="stat"><div class="stat-n" style="color:var(--JR)">29%</div><div class="stat-l">ג'וניור עלו לא' בראיון</div><div class="stat-s">הפתעה חיובית עיקרית</div></div>
-  <div class="stat"><div class="stat-n" style="color:var(--COND)">62%</div><div class="stat-l">ציון א'=100 → עברו ב'/ג'</div><div class="stat-s">המנבא הכי טוב במבחן</div></div>
-  <div class="stat"><div class="stat-n" style="color:var(--FAIL)">22%</div><div class="stat-l">ציון א'=100 → נכשלו!</div><div class="stat-s">מבחן לא מספיק לבד</div></div>
+<div class="stat-row">
+  <div class="stat"><div class="stat-n" style="color:var(--BG)">48%</div><div class="stat-l">שיעור מעבר ב'/ג'</div><div class="stat-s">מ-95 מועמדי מבחן</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--FAIL)">24%</div><div class="stat-l">כשל הדרכתי</div><div class="stat-s">גבוה מכשל טכנולוגי (15%)</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--TECH)">77%</div><div class="stat-l">טכנולוגי ב'/ג' → הדרכתי ב'/ג'</div><div class="stat-s">המנבא הכי חזק</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--INST)">67%</div><div class="stat-l">"ניסיון" בעברי ב'/ג' הדרכתי</div><div class="stat-s">vs 20% בנכשלים</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--FAIL)">9</div><div class="stat-l">ב'/ג'=100 + כשל הדרכתי</div><div class="stat-s">המבחן לא מנבא</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--A)">24%</div><div class="stat-l">מעברי הדרכתי — עלו רמה</div><div class="stat-s">vs 12% בטכנולוגי</div></div>
 </div>
 
-<!-- SEC 1 -->
-<div class="sec"><span class="sec-n">01</span><span class="sec-t">מסלולים מלאים: מבחן → ר1 → ר2</span></div>
-<div class="card full bM">
-  <div class="ct">שלושת השלבים — כמה עברו כל מסלול</div>
-  <div class="ch" style="height:300px"><canvas id="pipeSankey"></canvas></div>
-  <div class="ins iM">
-    המסלול השכיח ביותר: <strong>מבחן ב'/ג' → ראיון 1 ב'/ג' → ראיון 2 ב'/ג' (39 מועמדים)</strong>.
-    מסלול מוזר מעניין: <strong>מבחן א' → ראיון 1 נכשל → ראיון 2 א' (11 מועמדים)</strong> — ראיון 1 לא תאם לתוצאה הסופית.
-    קבוצת ג'וניור שנכשלה בראיון 1 ועדיין עברה ג'וניור בראיון 2: <strong>7 מועמדים</strong> — ראיון 1 לא מנבא ראיון 2 לרמת ג'וניור.
-  </div>
-</div>
-
-<!-- SEC 2 -->
-<div class="sec"><span class="sec-n">02</span><span class="sec-t">כוח הניבוי של ציון א' — מעמיק</span></div>
-<div class="g2">
-
-  <div class="card bB">
-    <div class="ct">ציון א' = 100 → תוצאת ראיון 2 (51 עם ראיון)</div>
-    <div class="ch" style="height:240px"><canvas id="a100chart"></canvas></div>
-    <div class="ins">
-      ציון א'=100 שווה ל<strong>49% סיכוי לב'/ג'</strong> — אבל גם <strong>22% כשל</strong>.
-      המבחן מוכיח ידע, לא הדרכה.
-    </div>
-  </div>
-
-  <div class="card bF">
-    <div class="ct">ציון א' = 0 → תוצאת ראיון 2 (37 עם ראיון)</div>
-    <div class="ch" style="height:240px"><canvas id="a0chart"></canvas></div>
-    <div class="ins iF">
-      ציון א'=0 — <strong>38% הגיעו לא' בראיון!</strong> הסיבה: ציון א' אוטומטי שגוי לא מנבא כישלון.
-      אבל — <strong>22% נכשלו</strong>. כלומר: ציון 0 לא מספיק לפסול.
-    </div>
-  </div>
-
-</div>
-
-<!-- SEC 2b: Score heatmap -->
-<div class="sec"><span class="sec-n">03</span><span class="sec-t">מטריצת ניבוי: שילוב ציון א' + ב'/ג' → תוצאה</span></div>
-<div class="card full bB">
-  <div class="ct">% הגיעו לב'/ג' בסופו של דבר — לפי שילוב ציון א' × ציון ב'/ג'</div>
-  <div id="heatmapContainer" style="overflow-x:auto;padding:.5rem 0;"></div>
-  <div class="ins">
-    השילוב <strong>א'=100 + ב'/ג'=100</strong> מביא <strong>62% לב'/ג'</strong> — הפרופיל הכי צפוי.
-    השילוב <strong>א'=0 + ב'/ג'=100</strong> — רק <strong>11%</strong> מגיעים לב'/ג', אבל <strong>39% לא'</strong>.
-    כל מי שא'=0 + ב'/ג'=0: <strong>0% הגיעו לב'/ג'</strong>, רובם לא זומנו כלל.
-  </div>
-</div>
-
-<!-- SEC 3: Interview keywords deep -->
-<div class="sec"><span class="sec-n">04</span><span class="sec-t">מה מבדיל ראיון 1 (טכנולוגי) ← מילות מפתח</span></div>
-<div class="g2">
-
-  <div class="card bA">
-    <div class="ct">אזכור "ניסיון" ו"תקשורת" בראיון 1 — לפי תוצאה סופית</div>
-    <div class="ch" style="height:250px"><canvas id="r1kw"></canvas></div>
-    <div class="ins iA">
-      "ניסיון" מוזכר ב-<strong>54% מעברי ב'/ג'</strong> — לעומת 30% בנכשלים.
-      "תקשורת" — <strong>76% ב'/ג'</strong> לעומת <strong>61% נכשלים</strong>. 
-      אלה המבדילים האמיתיים בראיון הטכנולוגי.
-    </div>
-  </div>
-
-  <div class="card bC">
-    <div class="ct">אזכור מפתח בראיון 2 (הדרכתי) — לפי תוצאה</div>
-    <div class="ch" style="height:250px"><canvas id="r2kw"></canvas></div>
-    <div class="ins iC">
-      "המחשת צורך" — <strong>33% ב'/ג'</strong> לעומת <strong>17% נכשלים</strong>.
-      "ברור" מוזכר <strong>3x יותר</strong> אצל עברי ב'/ג'.
-      "מבולגן" — לא מופיע בקבוצות עם תוצאה טובה בכלל.
-    </div>
-  </div>
-
-</div>
-
-<!-- SEC 4: Interesting patterns -->
-<div class="sec"><span class="sec-n">05</span><span class="sec-t">ממצאים מפתיעים ופרדוקסים</span></div>
+<!-- SEC 1: Key findings -->
+<div class="sec"><span class="sec-n">01</span><span class="sec-t">ממצאים עיקריים</span></div>
 <div class="g3">
 
   <div class="finding alert">
-    <div class="finding-title">ציון מושלם → כשל בראיון</div>
-    <div class="finding-body">
-      <strong>8 מועמדים</strong> קיבלו 100 בכל שלושת ציוני המבחן (ג'וניור, א', ב'/ג') — ובכל זאת נכשלו בראיון ההדרכתי.
-      הסיבה בהערות: "רץ על המצגת", "לא דיבר עם החניך", "ההסברים לא מותאמים לבני נוער".
-      <strong>המסקנה:</strong> ציון מבחן מושלם לא מנבא יכולת הדרכה.
+    <div class="f-title">המבחן לא מנבא הדרכה</div>
+    <div class="f-body">
+      <strong>9 מועמדים</strong> קיבלו ב'/ג'=100 במבחן — ונכשלו בראיון הדרכתי.
+      בראיון הדרכתי, נכשלו עם ציון א' ממוצע <strong>48</strong> — לא הרבה פחות מהעוברים (73).
+      <strong>ציון מבחן גבוה לא מגן מכשל הדרכתי.</strong>
+    </div>
+  </div>
+
+  <div class="finding key">
+    <div class="f-title">ראיון טכנולוגי = תקרה קשיחה</div>
+    <div class="f-body">
+      <strong>0 מועמדים</strong> שקיבלו א' בראיון טכנולוגי עברו לב'/ג' בהדרכתי.
+      ראיון 1 טכנולוגי קובע את התקרה — <strong>לא ניתן לעבור אותו בראיון ההדרכתי.</strong>
+      77% ממי שעבר טכנולוגי ב'/ג' — עבר גם הדרכתי ב'/ג'.
     </div>
   </div>
 
   <div class="finding positive">
-    <div class="finding-title">ג'וניור שעלה לא' בראיון</div>
-    <div class="finding-body">
-      <strong>5 מועמדים</strong> עברו מבחן ג'וניור בלבד אך עברו לא' בראיון.
-      הפרופיל הטיפוסי שלהם: ציון ב'/ג' <strong>100</strong> (!) אך ציון א' <strong>0</strong>.
-      כלומר — הציון האוטומטי לא' אפס אותם לא נכון. <strong>הכישרון הדרכתי שלהם פוצח רק בראיון.</strong>
+    <div class="f-title">ראיון הדרכתי מעלה רמות יותר</div>
+    <div class="f-body">
+      בראיון הדרכתי — <strong>24% עלו רמה</strong> לעומת <strong>12% בטכנולוגי</strong>.
+      גם מועמד ג'וניור שלא נראה כ-א' במבחן — עלה ב הדרכתי.
+      <strong>ראיון הדרכתי מגלה פוטנציאל שהמבחן לא תפס.</strong>
     </div>
   </div>
 
-  <div class="finding insight">
-    <div class="finding-title">מבחן א' → ראיון 1 נכשל → ראיון 2 א'</div>
-    <div class="finding-body">
-      <strong>11 מועמדים</strong> עברו מבחן לרמת א', נכשלו בראיון הראשון — ועדיין עברו לא' בראיון השני.
-      בדיקת ההערות: ראיון 1 שלהם היה לרוב <strong>הדרכתי</strong> (לא טכנולוגי), והבעיה הייתה ביישנות או חוסר ניסיון — לא חוסר ידע.
-      <strong>ראיון 1 לא תמיד מנבא נכון לרמת א'.</strong>
-    </div>
-  </div>
-
-  <div class="finding warning">
-    <div class="finding-title">קבוצת "לא רלוונטי" בראיון 1</div>
-    <div class="finding-body">
-      <strong>34 מועמדים</strong> קיבלו "לא רלוונטי" בראיון 1 — ועברו ישירות לראיון 2.
-      מבין אלה שהיה להם ראיון 2: <strong>41% עברו לא'</strong>, <strong>24% ג'וניור</strong>, <strong>9% נכשלו</strong>.
-      <strong>מדוע "לא רלוונטי"?</strong> נראה שמדובר במועמדים עם ניסיון הדרכה קודם שדילגו על ראיון 1.
+  <div class="finding warn">
+    <div class="f-title">ניסיון = המבדיל ב-הדרכתי</div>
+    <div class="f-body">
+      "ניסיון" מוזכר ב-<strong>67% מעברי ב'/ג' הדרכתי</strong> לעומת <strong>20% מנכשלים</strong>.
+      בראיון טכנולוגי — "ניסיון" לא מבדיל כלל.
+      <strong>ניסיון הדרכה קודם הוא אינדיקטור חזק לב'/ג'.</strong>
     </div>
   </div>
 
   <div class="finding alert">
-    <div class="finding-title">קבוצת תנאי — מסלול מוזר</div>
-    <div class="finding-body">
-      מתוך 37 בקבוצת התנאי: <strong>3 עברו לב'/ג'</strong>, <strong>13 עברו לג'וניור</strong> — ורק <strong>10 הגיעו לא'</strong>.
-      כלומר, רוב "תנאי א'" בפועל הסתיים בג'וניור.
-      <strong>קבוצת התנאי ממוינת נמוך יותר ממה שהשם מרמז.</strong>
+    <div class="f-title">64% מועמדי ב'/ג' → ראיון הדרכתי ישיר</div>
+    <div class="f-body">
+      רוב מועמדי ב'/ג' לא עוברים ראיון טכנולוגי כלל.
+      <strong>זו סכנה:</strong> 9 מהם קיבלו ב'/ג'=100 ונכשלו בהדרכתי — ולא היה ראיון טכנולוגי שיזהה זאת.
+      <strong>שקלו ראיון טכנולוגי קצר לכל מועמדי ב'/ג'.</strong>
     </div>
   </div>
 
   <div class="finding positive">
-    <div class="finding-title">ראיון 1 ב'/ג' → ראיון 2 ב'/ג': אמינות גבוהה</div>
-    <div class="finding-body">
-      <strong>74%</strong> ממי שעבר ראיון 1 לשנה ב' — עבר גם ראיון 2 לשנה ב'.
-      ראיון 1 טכנולוגי לב'/ג' הוא <strong>המנבא הכי טוב</strong> בתהליך.
-      רק <strong>11%</strong> נפלו מב'/ג' לכשל לאחר ראיון 1 ב'/ג'.
+    <div class="f-title">תנאי: ראיון טכנולוגי עובד</div>
+    <div class="f-body">
+      36% מקבוצת התנאי קיבלו ראיון טכנולוגי — <strong>3 מהם עלו לב'/ג'</strong>.
+      מתוך תנאי שעברו טכנולוגי ב'/ג': <strong>100% עברו גם הדרכתי ב'/ג'</strong>.
+      <strong>ראיון טכנולוגי לתנאי — מכשיר נכון.</strong>
     </div>
   </div>
 
 </div>
 
-<!-- SEC 5: Score combo predictor -->
-<div class="sec"><span class="sec-n">06</span><span class="sec-t">מנבאים מעשיים — מי שווה לזמן לאיזה ראיון</span></div>
-<div class="card full bJ">
-  <div class="ct">המלצות מבוססות נתונים: שילוב ציונים → פעולה מומלצת</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:.5rem;">
-
-    <div style="background:rgba(77,184,255,.07);border:1px solid rgba(77,184,255,.2);border-radius:10px;padding:1rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--B);margin-bottom:.6rem;">א'=100 + ב'/ג'=100 (n=56)</div>
-      <div style="font-size:1.4rem;font-weight:900;color:var(--B);">62%</div>
-      <div style="font-size:.78rem;color:#8abadc;margin-top:.3rem;">עברו ב'/ג' בסופו של דבר. <strong style="color:var(--text);">לזמן ישירות לראיון ב'/ג'.</strong> לא צריך ראיון 1 בנפרד.</div>
-    </div>
-
-    <div style="background:rgba(62,207,142,.07);border:1px solid rgba(62,207,142,.2);border-radius:10px;padding:1rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--A);margin-bottom:.6rem;">ג'וניור≥75, א'=0, ב'/ג'=100 (n=35)</div>
-      <div style="font-size:1.4rem;font-weight:900;color:var(--A);">40%</div>
-      <div style="font-size:.78rem;color:#7ad6b5;margin-top:.3rem;">הגיעו לא' בראיון. <strong style="color:var(--text);">לזמן לראיון א' ולא לב'/ג'.</strong> ציון אוטומטי א'=0 מטעה כאן.</div>
-    </div>
-
-    <div style="background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);border-radius:10px;padding:1rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--JR);margin-bottom:.6rem;">ג'וניור≥75, א'=33-66 (n=35)</div>
-      <div style="font-size:1.4rem;font-weight:900;color:var(--JR);">40%</div>
-      <div style="font-size:.78rem;color:#d4b86a;margin-top:.3rem;">הגיעו לב'/ג' בראיון. <strong style="color:var(--text);">לשלוח לתנאי טכנולוגי</strong> — יש פוטנציאל אמיתי.</div>
-    </div>
-
-    <div style="background:rgba(255,95,95,.07);border:1px solid rgba(255,95,95,.2);border-radius:10px;padding:1rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--FAIL);margin-bottom:.6rem;">ג'וניור&lt;75 (כל ציון א') (n=~40)</div>
-      <div style="font-size:1.4rem;font-weight:900;color:var(--FAIL);">~5%</div>
-      <div style="font-size:.78rem;color:#d48a8a;margin-top:.3rem;">הגיעו לב'/ג' בסופו של דבר. <strong style="color:var(--text);">לא לזמן לראיון.</strong> חסכון משמעותי בזמן.</div>
-    </div>
-
-    <div style="background:rgba(180,127,255,.07);border:1px solid rgba(180,127,255,.2);border-radius:10px;padding:1rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--COND);margin-bottom:.6rem;">ראיון 1 עבר ב'/ג' (n=57)</div>
-      <div style="font-size:1.4rem;font-weight:900;color:var(--COND);">74%</div>
-      <div style="font-size:.78rem;color:#b899e8;margin-top:.3rem;">עברו ב'/ג' בראיון 2. <strong style="color:var(--text);">ראיון 1 ב'/ג' = מנבא הכי חזק.</strong> לתעדף אלה בתהליך.</div>
-    </div>
-
-    <div style="background:rgba(255,95,95,.07);border:1px solid rgba(255,95,95,.2);border-radius:10px;padding:1rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--FAIL);margin-bottom:.6rem;">מבחן ב'/ג' + ראיון 1 א' (n=13)</div>
-      <div style="font-size:1.4rem;font-weight:900;color:var(--FAIL);">0%</div>
-      <div style="font-size:.78rem;color:#d48a8a;margin-top:.3rem;">הגיעו לב'/ג' בראיון 2. אם ראיון 1 נתן א' למועמד ב'/ג' — <strong style="color:var(--text);">ב'/ג' כנראה לא יתממש.</strong></div>
-    </div>
-
-  </div>
-  <div class="ins iJ" style="margin-top:1rem;">
-    <strong>תובנת מפתח:</strong> ראיון טכנולוגי שמסיים ב<strong>א'</strong> עבור מועמד מבחן ב'/ג' — <strong>אף אחד מהם לא עבר ב'/ג' בראיון 2</strong>.
-    כלומר ראיון 1 = "תקרת זכוכית". אם הוא נתן א' — כך יסתיים התהליך.
+<!-- SEC 2: Score heatmap -->
+<div class="sec"><span class="sec-n">02</span><span class="sec-t">מטריצת ניבוי — ציון א' × ב'/ג' → % הגיעו לב'/ג' סופי</span></div>
+<div class="card full cBG">
+  <div class="ct">שילוב ציונים → הסיכוי להגיע לב'/ג' בסוף התהליך</div>
+  <div class="hm-wrap" id="heatmap"></div>
+  <div class="ins">
+    <strong>א'=100 + ב'/ג'=100 → 62% לב'/ג'</strong> — לזמן ישירות לב'/ג'.
+    <strong>א'=0 + ב'/ג'=100 → רק 11% לב'/ג'</strong>, אבל 39% לא' — לשלוח להדרכתי א'.
+    כל <strong>א'=0 + ב'/ג'=0 → 0%</strong> — לא לזמן.
   </div>
 </div>
 
-<!-- SEC 6: Technical vs instructional gap -->
-<div class="sec"><span class="sec-n">07</span><span class="sec-t">פער: ידע טכני ↔ יכולת הדרכה</span></div>
+<!-- SEC 3: Score vs interview type comparison -->
+<div class="sec"><span class="sec-n">03</span><span class="sec-t">כשל לפי סוג ראיון — שוני במנבאים</span></div>
 <div class="g2">
 
-  <div class="card bF">
-    <div class="ct">% ראיון 2 = כשל — לפי ציון א' במבחן</div>
-    <div class="ch" style="height:240px"><canvas id="failByA"></canvas></div>
-    <div class="ins iF">
-      <strong>22% כשל</strong> גם כשציון א'=100. הירידה בשיעור הכשל לציון 33-66 (6%) מפתיעה —
-      ייתכן שמועמדים אלה מגיעים עם ציפיות נמוכות יותר ומפתיעים לטובה.
+  <div class="card cT">
+    <div class="ct">כשל ראיון טכנולוגי — ציון א' הוא המנבא</div>
+    <div class="ch" style="height:230px"><canvas id="techFailPredict"></canvas></div>
+    <div class="ins iT">
+      בכשל טכנולוגי: ציון א' ממוצע <strong>20</strong> — הנמוך מכל קבוצה.
+      ציון ג'וניור של נכשלים (95) לא שונה מעוברים — <strong>ציון ג'וניור לא מנבא כשל טכנולוגי.</strong>
     </div>
   </div>
 
-  <div class="card bA">
-    <div class="ct">% ראיון 2 = ב'/ג' — לפי ציון א' במבחן</div>
-    <div class="ch" style="height:240px"><canvas id="bgByA"></canvas></div>
-    <div class="ins iA">
-      קפיצה ברורה: ציון א'=33-66 נותן <strong>40% לב'/ג'</strong> — כמעט זהה לציון א'=100 (49%).
-      <strong>ציון א' 0 נותן רק 8% לב'/ג'</strong> — זה הגבול האמיתי.
+  <div class="card cI">
+    <div class="ct">כשל ראיון הדרכתי — ציון א' לא מספיק</div>
+    <div class="ch" style="height:230px"><canvas id="instFailPredict"></canvas></div>
+    <div class="ins iI">
+      בכשל הדרכתי: ציון א' ממוצע <strong>48</strong> — קרוב לציון עוברי א'.
+      <strong>אי-אפשר לחזות כשל הדרכתי מציוני מבחן.</strong>
+      רק ניסיון הדרכה קיים ("ניסיון" בהערות) מבדיל.
     </div>
   </div>
 
 </div>
 
-</div><!-- /wrap -->
+<!-- SEC 4: Full path analysis -->
+<div class="sec"><span class="sec-n">04</span><span class="sec-t">מסלולים מלאים — מבחן + סוג ראיון + תוצאה</span></div>
+<div class="card full cM">
+  <div class="ct">מסלולים שכיחים — מבחן → סוג ראיון → תוצאה (n≥5)</div>
+  <div class="ch" style="height:290px"><canvas id="pathsChart"></canvas></div>
+  <div class="ins">
+    <strong>ב'/ג' → הדרכתי → ב'/ג'</strong>: המסלול השכיח ביותר (25). 
+    <strong>א' → הדרכתי → כשל → א'</strong>: 7 מועמדים שנכשלו בראיון 1 הדרכתי עדיין עברו לא' בראיון 2 — ראיון 1 לא תמיד סופי.
+    <strong>ג'וניור → הדרכתי → כשל → ג'וניור</strong>: 6 מועמדים — כשל בהדרכתי אינו מבטל מעבר לג'וניור.
+  </div>
+</div>
+
+<!-- SEC 5: Recommendations -->
+<div class="sec"><span class="sec-n">05</span><span class="sec-t">המלצות מעשיות לשיפור תהליך המיון</span></div>
+<div class="card full cA">
+  <div class="ct">המלצות לפי תת-קבוצה</div>
+  <div class="rec-grid">
+    <div class="rec" style="background:rgba(77,184,255,.06);border-color:rgba(77,184,255,.2);">
+      <div style="color:var(--BG);font-family:'JetBrains Mono',monospace;font-size:.68rem;margin-bottom:.5rem;">ב'/ג' → שיפור</div>
+      <div style="font-size:.82rem;color:#8ab8d8;line-height:1.65;">
+        <strong style="color:var(--text);">הוסיפו ראיון טכנולוגי קצר</strong> לכל מועמדי ב'/ג' לפני ההדרכתי. 
+        64% מהם מדלגים עליו כיום — 9 נכשלו בהדרכתי בגלל בעיה טכנית שלא זוהתה.
+      </div>
+    </div>
+    <div class="rec" style="background:rgba(62,207,142,.06);border-color:rgba(62,207,142,.2);">
+      <div style="color:var(--A);font-family:'JetBrains Mono',monospace;font-size:.68rem;margin-bottom:.5rem;">הדרכתי → שאלות מפתח</div>
+      <div style="font-size:.82rem;color:#7ab898;line-height:1.65;">
+        בתחילת כל ראיון הדרכתי — שאלו <strong style="color:var(--text);">"תאר ניסיון הדרכה קודם"</strong>. 
+        ניסיון קיים = 67% לב'/ג'. ללא ניסיון = 20%. שאלה זו חוסכת זמן.
+      </div>
+    </div>
+    <div class="rec" style="background:rgba(245,200,66,.06);border-color:rgba(245,200,66,.2);">
+      <div style="color:var(--JR);font-family:'JetBrains Mono',monospace;font-size:.68rem;margin-bottom:.5rem;">ג'וניור → הדרכתי</div>
+      <div style="font-size:.82rem;color:#c8b870;line-height:1.65;">
+        73% מועמדי ג'וניור קיבלו ראיון הדרכתי. <strong style="color:var(--text);">הסימולציה היא כלי ראשוני</strong> — 100% מההערות מזכירות אותה. 
+        לא לוותר על ראיון הדרכתי גם לג'וניור.
+      </div>
+    </div>
+    <div class="rec" style="background:rgba(244,132,95,.06);border-color:rgba(244,132,95,.2);">
+      <div style="color:var(--TECH);font-family:'JetBrains Mono',monospace;font-size:.68rem;margin-bottom:.5rem;">תנאי → שמרו על הטכנולוגי</div>
+      <div style="font-size:.82rem;color:#c89080;line-height:1.65;">
+        ראיון טכנולוגי לתנאי — <strong style="color:var(--text);">עובד מצוין</strong>. מי שעבר טכנולוגי ב'/ג' כתנאי — כולם עברו הדרכתי ב'/ג'. 
+        36% מתנאי קיבלו ראיון טכנולוגי — שמרו על שיעור זה.
+      </div>
+    </div>
+    <div class="rec" style="background:rgba(255,95,114,.06);border-color:rgba(255,95,114,.2);">
+      <div style="color:var(--FAIL);font-family:'JetBrains Mono',monospace;font-size:.68rem;margin-bottom:.5rem;">סינון → חיסכון</div>
+      <div style="font-size:.82rem;color:#c87880;line-height:1.65;">
+        <strong style="color:var(--text);">ג'וניור&lt;75 + א'=0</strong>: לא לזמן לראיון. 
+        <strong style="color:var(--text);">א'=100 + ב'/ג'=100</strong>: לזמן ישירות לב'/ג' הדרכתי, ולשקול ראיון טכנולוגי מקדים.
+      </div>
+    </div>
+    <div class="rec" style="background:rgba(196,127,255,.06);border-color:rgba(196,127,255,.2);">
+      <div style="color:var(--COND);font-family:'JetBrains Mono',monospace;font-size:.68rem;margin-bottom:.5rem;">ראיון 1 נכשל → לא הסוף</div>
+      <div style="font-size:.82rem;color:#a87cc8;line-height:1.65;">
+        7 מועמדים נכשלו בראיון 1 הדרכתי — ועברו לא' בראיון 2. 
+        <strong style="color:var(--text);">כשל בראיון 1 הדרכתי לא מבטל מועמד</strong>, במיוחד אם הנימוק הוא חוסר ניסיון ולא חוסר כישרון.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
 
 <script>
-const C={B:'#4db8ff',A:'#3ecf8e',JR:'#f5c842',FAIL:'#ff5f5f',COND:'#b47fff',NONE:'#3a4a6a'};
+const C={BG:'#4db8ff',A:'#3ecf8e',JR:'#f5c842',FAIL:'#ff5f72',COND:'#c47fff',TECH:'#f4845f',INST:'#3ecf8e'};
 function rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
-Chart.defaults.color='#5a6e9a';
-Chart.defaults.font={family:"'Heebo',sans-serif",size:11};
-Chart.defaults.plugins.legend.labels.boxWidth=9;
-Chart.defaults.plugins.legend.labels.padding=10;
-const GC='#1d2640';
+Chart.defaults.color='#5c6a8a';Chart.defaults.font={family:"'Heebo',sans-serif",size:11};
+Chart.defaults.plugins.legend.labels.boxWidth=9;Chart.defaults.plugins.legend.labels.padding=10;
+const GC='#1e2436';
 
-// 1. Pipeline top paths
-new Chart(document.getElementById('pipeSankey'),{
-  type:'bar',
-  data:{
-    labels:['ב→ב→ב (39)','נ→נ→נ (26)','ב→א→א (13)','ב→נ→נ (13)','א→כ→א (11)','ת→נ→נ (10)','ב→ב→נ (9)','א→נ→א (9)','ת→ג→ג (8)','ג→כ→ג (7)'],
-    datasets:[{
-      label:'מועמדים',
-      data:[39,26,13,13,11,10,9,9,8,7],
-      backgroundColor:[rgba(C.B,.85),rgba(C.NONE,.6),rgba(C.B,.55),rgba(C.NONE,.5),rgba(C.A,.75),rgba(C.NONE,.45),rgba(C.NONE,.55),rgba(C.A,.5),rgba(C.JR,.7),rgba(C.JR,.55)],
-      borderRadius:6
-    }]
-  },
-  options:{
-    indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    scales:{x:{grid:{color:GC},ticks:{color:'#5a6e9a'}},y:{grid:{display:false},ticks:{color:'#8899bb',font:{family:"'JetBrains Mono',monospace",size:10}}}},
-    plugins:{legend:{display:false},tooltip:{callbacks:{title:ctx=>{const labels=['ב/ג→ב/ג→ב/ג','נכשל→לא ראיון→לא ראיון','ב/ג→א′→א′','ב/ג→לא ר.→לא ר.','א′→כשל ר1→א′ ר2','תנאי→לא ר.→לא ר.','ב/ג→ב/ג ר1→לא ר.','א′→לא ר1→א′ ר2','תנאי→ג′וניור ר1→ג′וניור','ג′וניור→כשל ר1→ג′וניור ר2'];return labels[ctx[0].dataIndex]||'';}}}}
-  }
-});
-
-// 2. A=100 chart
-new Chart(document.getElementById('a100chart'),{
-  type:'doughnut',
-  data:{
-    labels:["ב'/ג' (49%)","א' (22%)","נכשל (22%)","ג'וניור (8%)"],
-    datasets:[{data:[25,11,11,4],backgroundColor:[rgba(C.B,.85),rgba(C.A,.8),rgba(C.FAIL,.8),rgba(C.JR,.8)],borderColor:'#0d1018',borderWidth:3,hoverOffset:5}]
-  },
-  options:{cutout:'60%',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8899bb',font:{size:10}}}}}
-});
-
-// 3. A=0 chart
-new Chart(document.getElementById('a0chart'),{
-  type:'doughnut',
-  data:{
-    labels:["א' (38%)","ג'וניור (27%)","נכשל (22%)","ב'/ג' (8%)","אחר (5%)"],
-    datasets:[{data:[14,10,8,3,2],backgroundColor:[rgba(C.A,.8),rgba(C.JR,.8),rgba(C.FAIL,.8),rgba(C.B,.8),rgba(C.NONE,.6)],borderColor:'#0d1018',borderWidth:3,hoverOffset:5}]
-  },
-  options:{cutout:'60%',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#8899bb',font:{size:10}}}}}
-});
-
-// 4. Heatmap: A score × BG score → % reach B/G
-// Rows: A score (0, 33-66, 67-99, 100) | Cols: BG score (0, 33-66, 67-99, 100)
-const hmData = [
-  // BG=0, BG=33-66, BG=67-99, BG=100
-  [0, 0, 0, 11],   // A=0
-  [0, 0, 0, 40],   // A=33-66
-  [0, 0, 25, 50],  // A=67-99
-  [0, 0, 30, 62],  // A=100
+// Heatmap
+const hmData=[
+  [0,0,0,11],   // A=0
+  [0,0,0,40],   // A=33-66
+  [0,0,25,50],  // A=67-99
+  [0,0,30,62],  // A=100
 ];
-const hmRowLabels = ["א'=0","א'=33-66","א'=67-99","א'=100"];
-const hmColLabels = ["ב'/ג'=0","ב'/ג'=33-66","ב'/ג'=67-99","ב'/ג'=100"];
-
-function heatColor(v) {
-  if(v===0) return `rgba(255,95,95,0.15)`;
-  const t = v/100;
+const hmRows=["א'=0","א'=33-66","א'=67-99","א'=100"];
+const hmCols=["ב'/ג'=0","ב'/ג'=33-66","ב'/ג'=67-99","ב'/ג'=100"];
+function heatColor(v){
+  if(v===0) return 'rgba(255,95,114,0.15)';
+  const t=v/100;
   if(t<0.3) return `rgba(245,200,66,${0.2+t*.4})`;
-  if(t<0.5) return `rgba(62,207,142,${0.2+t*.5})`;
+  if(t<0.5) return `rgba(62,207,142,${0.25+t*.4})`;
   return `rgba(77,184,255,${0.3+t*.5})`;
 }
-
-const hm = document.getElementById('heatmapContainer');
-let html = '<div style="display:grid;gap:3px;">';
-// Column labels
-html += '<div style="display:flex;gap:3px;"><div style="width:90px;"></div>';
-hmColLabels.forEach(l=>{html+=`<div class="hm-col-label" style="flex:1;">${l}</div>`;});
-html += '</div>';
-// Rows
-hmRowLabels.forEach((rl,ri)=>{
-  html += `<div class="hm-row"><div class="hm-label">${rl}</div>`;
-  hmData[ri].forEach((v,ci)=>{
-    const bg = heatColor(v);
-    const textColor = v===0?'rgba(90,110,154,0.6)':'rgba(220,228,248,0.9)';
-    html += `<div class="hm-cell" style="background:${bg};color:${textColor};flex:1;">${v===0?'—':v+'%'}</div>`;
+const hm=document.getElementById('heatmap');
+let html='<div style="display:grid;gap:3px;">';
+html+='<div style="display:flex;gap:3px;"><div style="width:100px;"></div>';
+hmCols.forEach(l=>{html+=`<div class="hm-col-label" style="flex:1;">${l}</div>`;});
+html+='</div>';
+hmRows.forEach((rl,ri)=>{
+  html+=`<div class="hm-row"><div class="hm-label">${rl}</div>`;
+  hmData[ri].forEach((v)=>{
+    const bg=heatColor(v);
+    const tc=v===0?'rgba(92,106,138,0.6)':'rgba(221,228,245,0.9)';
+    html+=`<div class="hm-cell" style="background:${bg};color:${tc};flex:1;">${v===0?'—':v+'%'}</div>`;
   });
-  html += '</div>';
+  html+='</div>';
 });
-html += '</div>';
-hm.innerHTML = html;
+html+='</div>';
+hm.innerHTML=html;
 
-// 5. R1 keywords: ניסיון + תקשורת
-new Chart(document.getElementById('r1kw'),{
-  type:'bar',
-  data:{
-    labels:['הדרכה','קוד','הסבר','תקשורת','ניסיון','חזק','מקצועי','חלש'],
-    datasets:[
-      {label:"ב'/ג'", data:[85,78,78,76,54,24,20,0],  backgroundColor:rgba(C.B,.8),  borderRadius:4},
-      {label:"א'",    data:[89,86,86,84,45,36,25,7],  backgroundColor:rgba(C.A,.8)},
-      {label:"ג'וניור",data:[86,76,81,71,52,19,14,5], backgroundColor:rgba(C.JR,.8)},
-      {label:"נכשל",  data:[74,65,74,61,30,17,22,13], backgroundColor:rgba(C.FAIL,.8)},
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#8899bb'}},y:{grid:{color:GC},ticks:{color:'#5a6e9a',callback:v=>v+'%'},max:100}},plugins:{legend:{position:'bottom',labels:{color:'#8899bb',font:{size:10}}}}}
-});
+// Tech fail predictor
+new Chart(document.getElementById('techFailPredict'),{type:'bar',data:{
+  labels:["ג'וניור","א'","ב'/ג'"],
+  datasets:[
+    {label:"ב'/ג' (15)", data:[98,80,100],backgroundColor:rgba(C.BG,.8),borderRadius:5},
+    {label:"א' (11)",    data:[98,61,88], backgroundColor:rgba(C.A,.8),  borderRadius:5},
+    {label:"ג'וניור (3)",data:[83,55,67], backgroundColor:rgba(C.JR,.8), borderRadius:5},
+    {label:"כשל (5)",    data:[95,20,40], backgroundColor:rgba(C.FAIL,.8),borderRadius:5},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#8898b8'}},y:{grid:{color:GC},ticks:{color:'#5c6a8a'},max:100}},plugins:{legend:{position:'bottom',labels:{color:'#8898b8',font:{size:10}}}}}});
 
-// 6. R2 keywords
-new Chart(document.getElementById('r2kw'),{
-  type:'bar',
-  data:{
-    labels:['הדרכה','מקצועי','הסבר','יחס','המחשת\nצורך','ניסיון','ברור','סימולציה'],
-    datasets:[
-      {label:"ב'/ג'", data:[76,74,67,65,33,33,28,17], backgroundColor:rgba(C.B,.8),  borderRadius:4},
-      {label:"א'",    data:[48,41,45,45,20,14,9,20],  backgroundColor:rgba(C.A,.8)},
-      {label:"ג'וניור",data:[24,24,24,24,14,0,10,5],  backgroundColor:rgba(C.JR,.8)},
-      {label:"נכשל",  data:[43,43,39,35,17,17,9,22],  backgroundColor:rgba(C.FAIL,.8)},
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#8899bb'}},y:{grid:{color:GC},ticks:{color:'#5a6e9a',callback:v=>v+'%'},max:100}},plugins:{legend:{position:'bottom',labels:{color:'#8899bb',font:{size:10}}}}}
-});
+// Inst fail predictor
+new Chart(document.getElementById('instFailPredict'),{type:'bar',data:{
+  labels:["ג'וניור","א'","ב'/ג'"],
+  datasets:[
+    {label:"ב'/ג' (33)", data:[95,73,99],backgroundColor:rgba(C.BG,.8),borderRadius:5},
+    {label:"א' (22)",    data:[92,48,80], backgroundColor:rgba(C.A,.8),  borderRadius:5},
+    {label:"ג'וניור (7)",data:[93,14,71], backgroundColor:rgba(C.JR,.8), borderRadius:5},
+    {label:"כשל (20)",   data:[96,48,50], backgroundColor:rgba(C.FAIL,.8),borderRadius:5},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#8898b8'}},y:{grid:{color:GC},ticks:{color:'#5c6a8a'},max:100}},plugins:{legend:{position:'bottom',labels:{color:'#8898b8',font:{size:10}}}}}});
 
-// 7. Fail rate by A score
-new Chart(document.getElementById('failByA'),{
-  type:'bar',
-  data:{
-    labels:["א'=0 (37)","א'=33-66 (35)","א'=67-99 (14)","א'=100 (51)"],
-    datasets:[{
-      label:'% נכשלו בראיון 2',
-      data:[22, 6, 14, 22],
-      backgroundColor:[rgba(C.FAIL,.7),rgba(C.FAIL,.4),rgba(C.FAIL,.55),rgba(C.FAIL,.8)],
-      borderRadius:6
-    }]
-  },
-  options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#8899bb'}},y:{grid:{color:GC},ticks:{color:'#5a6e9a',callback:v=>v+'%'},max:30}},plugins:{legend:{display:false}}}
-});
-
-// 8. BG reach rate by A score
-new Chart(document.getElementById('bgByA'),{
-  type:'bar',
-  data:{
-    labels:["א'=0 (37)","א'=33-66 (35)","א'=67-99 (14)","א'=100 (51)"],
-    datasets:[{
-      label:"% הגיעו לב'/ג'",
-      data:[8, 40, 29, 49],
-      backgroundColor:[rgba(C.B,.35),rgba(C.B,.6),rgba(C.B,.7),rgba(C.B,.9)],
-      borderRadius:6
-    }]
-  },
-  options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#8899bb'}},y:{grid:{color:GC},ticks:{color:'#5a6e9a',callback:v=>v+'%'},max:60}},plugins:{legend:{display:false}}}
-});
+// Full paths
+new Chart(document.getElementById('pathsChart'),{type:'bar',data:{
+  labels:[
+    "ב'/ג'→הדרכתי→ב'/ג' (25)",
+    "ב'/ג'→הדרכתי→א' (9)",
+    "ב'/ג'→טכנולוגי→ב'/ג' (9)",
+    "א'→הדרכתי→כשל→א' (7)",
+    "תנאי→הדרכתי→א' (6)",
+    "תנאי→הדרכתי→ג'וניור (6)",
+    "ג'וניור→הדרכתי→כשל→ג'וניור (6)",
+    "א'→הדרכתי→א' (6)",
+  ],
+  datasets:[{
+    label:'מועמדים',
+    data:[25,9,9,7,6,6,6,6],
+    backgroundColor:[rgba(C.BG,.85),rgba(C.A,.75),rgba(C.BG,.6),rgba(C.FAIL,.65),rgba(C.A,.65),rgba(C.JR,.65),rgba(C.FAIL,.5),rgba(C.A,.5)],
+    borderRadius:6
+  }]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:GC},ticks:{color:'#5c6a8a'}},y:{grid:{display:false},ticks:{color:'#8898b8',font:{family:"'JetBrains Mono',monospace",size:10}}}},plugins:{legend:{display:false}}}});
 </script>
 </body>
 </html>
