@@ -6,372 +6,126 @@
 <title>מרכז ניתוח מיון מדריכים</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
-
-:root {
-  --bg: #07090f;
-  --s1: #0d1018;
-  --s2: #131825;
-  --border: #1d2640;
-  --text: #d8e4f8;
-  --muted: #5a6e9a;
-  --B: #4db8ff;
-  --A: #3ecf8e;
-  --JR: #f5c842;
-  --FAIL: #ff5f5f;
-  --COND: #b47fff;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--bg);
-  background-image:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(77,184,255,.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 10% 90%, rgba(62,207,142,.04) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(180,127,255,.04) 0%, transparent 50%);
-  color: var(--text);
-  font-family: 'Heebo', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 1.5rem 5rem;
-}
-
-/* ── Hero ── */
-.hero {
-  max-width: 700px;
-  width: 100%;
-  text-align: center;
-  padding: 5rem 0 3.5rem;
-}
-
-.hero-tag {
-  display: inline-block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .72rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--B);
-  background: rgba(77,184,255,.08);
-  border: 1px solid rgba(77,184,255,.2);
-  border-radius: 20px;
-  padding: .35rem 1rem;
-  margin-bottom: 1.8rem;
-}
-
-h1 {
-  font-size: clamp(2rem, 6vw, 3.2rem);
-  font-weight: 900;
-  letter-spacing: -.03em;
-  line-height: 1.15;
-  margin-bottom: 1.2rem;
-}
-
-h1 .accent {
-  background: linear-gradient(135deg, var(--B) 0%, var(--A) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-desc {
-  font-size: 1.05rem;
-  color: var(--muted);
-  line-height: 1.7;
-  max-width: 520px;
-  margin: 0 auto 2.5rem;
-  font-weight: 300;
-}
-
-/* ── Stats row ── */
-.stats-row {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-}
-
-.stat-pill {
-  text-align: center;
-}
-
-.stat-pill-n {
-  font-size: 1.6rem;
-  font-weight: 900;
-  font-family: 'JetBrains Mono', monospace;
-  line-height: 1;
-}
-
-.stat-pill-l {
-  font-size: .72rem;
-  color: var(--muted);
-  margin-top: .2rem;
-}
-
-/* ── Divider ── */
-.divider {
-  width: 100%;
-  max-width: 900px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-  margin: 3rem 0;
-}
-
-/* ── Cards grid ── */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  gap: 1.4rem;
-  max-width: 900px;
-  width: 100%;
-}
-
-.card {
-  background: var(--s1);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 2rem 2rem 1.6rem;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  transition: border-color .25s, transform .2s, box-shadow .25s;
-}
-
-.card:hover {
-  border-color: #2e4070;
-  transform: translateY(-3px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  border-radius: 20px 20px 0 0;
-  opacity: 0;
-  transition: opacity .25s;
-}
-
-.card:hover::before { opacity: 1; }
-
-.card-1::before { background: linear-gradient(90deg, var(--B), var(--A), var(--JR), var(--FAIL)); }
-.card-2::before { background: linear-gradient(90deg, var(--A), var(--B), var(--COND)); }
-.card-3::before { background: linear-gradient(90deg, var(--COND), var(--B), var(--A), var(--JR)); }
-
-/* Glow blob */
-.card::after {
-  content: '';
-  position: absolute;
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  top: -60px; left: -60px;
-  opacity: 0;
-  filter: blur(60px);
-  transition: opacity .4s;
-  pointer-events: none;
-}
-.card-1::after { background: rgba(77,184,255,.08); }
-.card-2::after { background: rgba(62,207,142,.07); }
-.card-3::after { background: rgba(180,127,255,.07); }
-.card:hover::after { opacity: 1; }
-
-.card-icon {
-  width: 48px; height: 48px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem;
-  margin-bottom: 1.3rem;
-  flex-shrink: 0;
-}
-
-.icon-1 { background: rgba(77,184,255,.1); border: 1px solid rgba(77,184,255,.2); }
-.icon-2 { background: rgba(62,207,142,.1); border: 1px solid rgba(62,207,142,.2); }
-.icon-3 { background: rgba(180,127,255,.1); border: 1px solid rgba(180,127,255,.2); }
-
-.card-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: .68rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  margin-bottom: .5rem;
-}
-.num-1 { color: var(--B); }
-.num-2 { color: var(--A); }
-.num-3 { color: var(--COND); }
-
-.card-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin-bottom: .7rem;
-  letter-spacing: -.01em;
-}
-
-.card-desc {
-  font-size: .85rem;
-  color: var(--muted);
-  line-height: 1.65;
-  flex: 1;
-  margin-bottom: 1.5rem;
-}
-
-.card-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .45rem;
-  margin-bottom: 1.5rem;
-}
-
-.chip {
-  font-size: .7rem;
-  font-family: 'JetBrains Mono', monospace;
-  padding: .22rem .65rem;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  background: var(--s2);
-}
-
-.card-cta {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  font-size: .82rem;
-  font-weight: 700;
-  margin-top: auto;
-  transition: gap .2s;
-}
-
-.card:hover .card-cta { gap: .8rem; }
-
-.cta-1 { color: var(--B); }
-.cta-2 { color: var(--A); }
-.cta-3 { color: var(--COND); }
-
-.cta-arrow {
-  font-size: 1.1rem;
-  transition: transform .2s;
-}
-.card:hover .cta-arrow { transform: translateX(-4px); }
-
-/* ── Footer ── */
-footer {
-  margin-top: 4rem;
-  text-align: center;
-  font-size: .75rem;
-  color: var(--muted);
-  opacity: .5;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-@media (max-width: 500px) {
-  .cards { grid-template-columns: 1fr; }
-  h1 { font-size: 1.8rem; }
-}
+:root{--bg:#08090f;--s1:#0d0f18;--s2:#131620;--border:#1d2038;--text:#d8e0f5;--muted:#5a6088;
+  --BG:#4db8ff;--A:#3ecf8e;--JR:#f5c842;--FAIL:#ff5f72;--TECH:#f4845f;--INST:#3ecf8e;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);background-image:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(77,184,255,.05),transparent 60%),radial-gradient(ellipse 40% 40% at 5% 90%,rgba(62,207,142,.03),transparent 50%),radial-gradient(ellipse 40% 30% at 95% 80%,rgba(244,132,95,.03),transparent 50%);color:var(--text);font-family:'Heebo',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 1.5rem 5rem;}
+.hero{max-width:700px;width:100%;text-align:center;padding:5rem 0 3rem;}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--BG);background:rgba(77,184,255,.08);border:1px solid rgba(77,184,255,.18);border-radius:20px;padding:.32rem 1rem;margin-bottom:1.8rem;}
+h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-bottom:1.2rem;}
+h1 .accent{background:linear-gradient(135deg,var(--BG),var(--A));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.desc{font-size:1rem;color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto 2.5rem;font-weight:300;}
+.stats{display:flex;justify-content:center;gap:2.2rem;flex-wrap:wrap;}
+.s{text-align:center;}
+.s-n{font-size:1.55rem;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;}
+.s-l{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+.div{width:100%;max-width:920px;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2.8rem 0;}
+/* Level indicator */
+.level-bar{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-bottom:2rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
+.lv{display:flex;align-items:center;gap:.35rem;}
+.lv-dot{width:8px;height:8px;border-radius:50%;}
+.lv-arrow{color:var(--border);font-size:1rem;}
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:1.3rem;max-width:920px;width:100%;}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:1.9rem 2rem 1.5rem;position:relative;overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:border-color .2s, transform .18s, box-shadow .2s;}
+.card:hover{border-color:#2a3055;transform:translateY(-3px);box-shadow:0 18px 55px rgba(0,0,0,.45);}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:20px 20px 0 0;opacity:0;transition:opacity .2s;}
+.card:hover::before{opacity:1;}
+.c1::before{background:linear-gradient(90deg,var(--BG),var(--A),var(--JR),var(--FAIL));}
+.c2::before{background:linear-gradient(90deg,var(--TECH),var(--INST));}
+.c3::before{background:linear-gradient(90deg,var(--A),var(--BG),var(--TECH));}
+.card::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;top:-60px;left:-60px;opacity:0;filter:blur(55px);transition:opacity .35s;pointer-events:none;}
+.c1::after{background:rgba(77,184,255,.07);}
+.c2::after{background:rgba(244,132,95,.07);}
+.c3::after{background:rgba(62,207,142,.07);}
+.card:hover::after{opacity:1;}
+.icon{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;margin-bottom:1.2rem;}
+.i1{background:rgba(77,184,255,.1);border:1px solid rgba(77,184,255,.18);}
+.i2{background:rgba(244,132,95,.1);border:1px solid rgba(244,132,95,.18);}
+.i3{background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.18);}
+.num{font-family:'JetBrains Mono',monospace;font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.45rem;}
+.n1{color:var(--BG);} .n2{color:var(--TECH);} .n3{color:var(--A);}
+.ttl{font-size:1.15rem;font-weight:800;margin-bottom:.6rem;letter-spacing:-.01em;}
+.dsc{font-size:.84rem;color:var(--muted);line-height:1.65;flex:1;margin-bottom:1.4rem;}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem;}
+.chip{font-size:.68rem;font-family:'JetBrains Mono',monospace;padding:.2rem .6rem;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--s2);}
+.cta{display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:700;margin-top:auto;transition:gap .18s;}
+.card:hover .cta{gap:.8rem;}
+.ct1{color:var(--BG);} .ct2{color:var(--TECH);} .ct3{color:var(--A);}
+.arr{font-size:1rem;transition:transform .18s;}
+.card:hover .arr{transform:translateX(-4px);}
+footer{margin-top:3.5rem;text-align:center;font-size:.72rem;color:var(--muted);opacity:.4;font-family:'JetBrains Mono',monospace;}
+@media(max-width:500px){.cards{grid-template-columns:1fr;} h1{font-size:1.8rem;}}
 </style>
 </head>
 <body>
-
-<!-- Hero -->
 <section class="hero">
-  <div class="hero-tag">📊 מרכז ניתוח נתונים</div>
+  <div class="tag">📊 מרכז ניתוח נתונים</div>
   <h1>מיון מדריכים —<br><span class="accent">תובנות מהנתונים</span></h1>
-  <p class="hero-desc">
-    ניתוח מקיף של תהליך המיון: ממבחן הסינון הראשוני דרך הראיונות הטכנולוגיים וההדרכתיים — מי עובר, מי נופל, ומה מנבא הצלחה.
-  </p>
-  <div class="stats-row">
-    <div class="stat-pill">
-      <div class="stat-pill-n" style="color:var(--B)">853</div>
-      <div class="stat-pill-l">מועמדי מבחן</div>
-    </div>
-    <div class="stat-pill">
-      <div class="stat-pill-n" style="color:var(--A)">224</div>
-      <div class="stat-pill-l">הגיעו לראיונות</div>
-    </div>
-    <div class="stat-pill">
-      <div class="stat-pill-n" style="color:var(--JR)">3</div>
-      <div class="stat-pill-l">שלבי מיון</div>
-    </div>
-    <div class="stat-pill">
-      <div class="stat-pill-n" style="color:var(--COND)">4</div>
-      <div class="stat-pill-l">רמות הדרכה</div>
-    </div>
+  <p class="desc">ניתוח מקיף של תהליך המיון: מבחן סינון, ראיון טכנולוגי וראיון הדרכתי. רמות: ג'וניור &lt; א' &lt; ב'/ג'.</p>
+
+  <!-- Level order indicator -->
+  <div class="level-bar">
+    <div class="lv"><div class="lv-dot" style="background:#f5c842"></div>ג'וניור</div>
+    <span class="lv-arrow">←</span>
+    <div class="lv"><div class="lv-dot" style="background:#3ecf8e"></div>א'</div>
+    <span class="lv-arrow">←</span>
+    <div class="lv"><div class="lv-dot" style="background:#4db8ff"></div>ב'/ג' (הגבוהה)</div>
+  </div>
+
+  <div class="stats">
+    <div class="s"><div class="s-n" style="color:var(--BG)">853</div><div class="s-l">מועמדי מבחן</div></div>
+    <div class="s"><div class="s-n" style="color:var(--A)">224</div><div class="s-l">הגיעו לראיון</div></div>
+    <div class="s"><div class="s-n" style="color:var(--TECH)">49</div><div class="s-l">ראיון טכנולוגי</div></div>
+    <div class="s"><div class="s-n" style="color:var(--INST)">103</div><div class="s-l">ראיון הדרכתי</div></div>
   </div>
 </section>
 
-<div class="divider"></div>
+<div class="div"></div>
 
-<!-- Cards -->
 <div class="cards">
 
-  <!-- Card 1: Exam dashboard -->
-  <a class="card card-1" href="exam_dashboard.html">
-    <div class="card-icon icon-1">📋</div>
-    <div class="card-num num-1">דשבורד 01</div>
-    <div class="card-title">ניתוח מבחן הסינון</div>
-    <div class="card-desc">
-      התפלגות ציונים אוטומטיים, מה מבדיל בין רמות, הפער בין בדיקה אוטומטית לידנית, וניתוח הערות הבודקים הטכנולוגיים על 853 מועמדים.
-    </div>
-    <div class="card-chips">
+  <a class="card c1" href="exam_dashboard.html">
+    <div class="icon i1">📋</div>
+    <div class="num n1">דשבורד 01</div>
+    <div class="ttl">ניתוח מבחן הסינון</div>
+    <div class="dsc">ציוני מבחן אוטומטיים לכל רמה, מה מבדיל ג'וניור מא' מב'/ג', הפער בין בדיקה אוטומטית לידנית, ונושאים שכיחים בהערות בודקים.</div>
+    <div class="chips">
       <span class="chip">853 מועמדים</span>
-      <span class="chip">3 ציוני מבחן</span>
-      <span class="chip">הערות בודק</span>
-      <span class="chip">7 גרפים</span>
+      <span class="chip">ג'וניור / א' / ב'/ג'</span>
+      <span class="chip">ציון א' = מבדיל מרכזי</span>
     </div>
-    <div class="card-cta cta-1">
-      פתח דשבורד <span class="cta-arrow">←</span>
-    </div>
+    <div class="cta ct1">פתח דשבורד <span class="arr">←</span></div>
   </a>
 
-  <!-- Card 2: Interview pipeline dashboard -->
-  <a class="card card-2" href="interview_dashboard.html">
-    <div class="card-icon icon-2">🔄</div>
-    <div class="card-num num-2">דשבורד 02</div>
-    <div class="card-title">צינור הראיונות</div>
-    <div class="card-desc">
-      מבחן → ראיון טכנולוגי → ראיון הדרכתי: כמה עוברים, כמה נופלים, מה אפשר לסנן כבר במבחן, ומי כדאי לזמן ישירות לרמה גבוהה.
+  <a class="card c2" href="interview_dashboard.html">
+    <div class="icon i2">🔄</div>
+    <div class="num n2">דשבורד 02</div>
+    <div class="ttl">צינור ראיונות — טכנולוגי vs הדרכתי</div>
+    <div class="dsc">השוואת תוצאות ראיון טכנולוגי לעומת הדרכתי, ציוני מבחן לפי סוג ראיון, ולמי לשלוח איזה ראיון — המלצות מבוססות נתונים.</div>
+    <div class="chips">
+      <span class="chip">49 ראיון טכנולוגי</span>
+      <span class="chip">103 ראיון הדרכתי</span>
+      <span class="chip">כשל: 15% vs 24%</span>
     </div>
-    <div class="card-chips">
-      <span class="chip">224 מועמדים</span>
-      <span class="chip">3 שלבי מיון</span>
-      <span class="chip">פאנל מסננת</span>
-      <span class="chip">8 גרפים</span>
-    </div>
-    <div class="card-cta cta-2">
-      פתח דשבורד <span class="cta-arrow">←</span>
-    </div>
+    <div class="cta ct2">פתח דשבורד <span class="arr">←</span></div>
   </a>
 
-  <!-- Card 3: Deep insights dashboard -->
-  <a class="card card-3" href="deep_insights_dashboard.html">
-    <div class="card-icon icon-3">🔬</div>
-    <div class="card-num num-3">דשבורד 03</div>
-    <div class="card-title">תובנות מעמיקות</div>
-    <div class="card-desc">
-      פרדוקסים ומפתיעים: מי עם 100 מושלם נכשל בראיון, מי עם א'=0 הגיע לב'/ג', מטריצת ניבוי לפי שילוב ציונים, ומסלולי מיון מלאים.
-    </div>
-    <div class="card-chips">
+  <a class="card c3" href="deep_insights_dashboard.html">
+    <div class="icon i3">🔬</div>
+    <div class="num n3">דשבורד 03</div>
+    <div class="ttl">תובנות מעמיקות</div>
+    <div class="dsc">פרדוקסים: ב'/ג'=100 שנכשל בהדרכתי, ניסיון כמנבא הכי חזק, מטריצת ניבוי לפי שילוב ציונים, מסלולים מלאים והמלצות לשיפור.</div>
+    <div class="chips">
       <span class="chip">מטריצת ניבוי</span>
-      <span class="chip">12 מסלולים</span>
-      <span class="chip">פרדוקסים</span>
-      <span class="chip">המלצות</span>
+      <span class="chip">ניסיון = מבדיל מרכזי</span>
+      <span class="chip">6 המלצות</span>
     </div>
-    <div class="card-cta cta-3">
-      פתח דשבורד <span class="cta-arrow">←</span>
-    </div>
+    <div class="cta ct3">פתח דשבורד <span class="arr">←</span></div>
   </a>
 
 </div>
 
-<footer>
-  ניתוח נתוני מיון · כל הקבצים נמצאים באותה תיקייה
-</footer>
-
+<footer>כל 4 הקבצים חייבים להיות באותה תיקייה · ניתוח נתוני מיון</footer>
 </body>
 </html>
