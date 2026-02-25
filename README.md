@@ -1,1 +1,1 @@
-This is a dashboard of Nitzanim's Candidates test results
+This is a dashboard of Nitzanim's Candidate flow
