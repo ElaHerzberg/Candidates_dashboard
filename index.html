@@ -7,7 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
 :root{--bg:#08090f;--s1:#0d0f18;--s2:#131620;--border:#1d2038;--text:#d8e0f5;--muted:#cacbce;
-  --BG:#4db8ff;--A:#3ecf8e;--JR:#f5c842;--FAIL:#ff5f72;--TECH:#f4845f;--INST:#3ecf8e;}
+  --BG:#3ecf8e;--A:#4db8ff;--JR:#f5c842;--FAIL:#ff5f72;--TECH:#d65ff4;--INST:#ffec5f;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);background-image:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(77,184,255,.05),transparent 60%),radial-gradient(ellipse 40% 40% at 5% 90%,rgba(62,207,142,.03),transparent 50%),radial-gradient(ellipse 40% 30% at 95% 80%,rgba(244,132,95,.03),transparent 50%);color:var(--text);font-family:'Heebo',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 1.5rem 5rem;}
 .hero{max-width:700px;width:100%;text-align:center;padding:5rem 0 3rem;}
@@ -61,23 +61,23 @@ footer{margin-top:3.5rem;text-align:center;font-size:.72rem;color:var(--muted);o
 <body>
 <section class="hero">
   <div class="tag">📊 מרכז ניתוח נתונים</div>
-  <h1>מיון מדריכים —<br><span class="accent">תובנות מהנתונים</span></h1>
-  <p class="desc">ניתוח מקיף של תהליך המיון: מבחן סינון, ראיון טכנולוגי וראיון הדרכתי. רמות: ג'וניור &lt; א' &lt; ב'/ג'.</p>
+  <h1>תהליך גיוס מדריכים —<br><span class="accent">תובנות מהנתונים</span></h1>
+  <p class="desc">ניתוח מקיף של תהליך המיון: מבחן סינון, ראיון טכנולוגי וראיון הדרכתי.</p>
 
   <!-- Level order indicator -->
   <div class="level-bar">
     <div class="lv"><div class="lv-dot" style="background:#f5c842"></div>ג'וניור</div>
     <span class="lv-arrow">←</span>
-    <div class="lv"><div class="lv-dot" style="background:#3ecf8e"></div>א'</div>
+    <div class="lv"><div class="lv-dot" style="background:#4db8ff"></div>א'</div>
     <span class="lv-arrow">←</span>
-    <div class="lv"><div class="lv-dot" style="background:#4db8ff"></div>ב'/ג' (הגבוהה)</div>
+    <div class="lv"><div class="lv-dot" style="background:#3ecf8e"></div>ב'/ג' (הגבוהה)</div>
   </div>
 
   <div class="stats">
-    <div class="s"><div class="s-n" style="color:var(--BG)">853</div><div class="s-l">מועמדי מבחן</div></div>
-    <div class="s"><div class="s-n" style="color:var(--A)">224</div><div class="s-l">הגיעו לראיון</div></div>
-    <div class="s"><div class="s-n" style="color:var(--TECH)">49</div><div class="s-l">ראיון טכנולוגי</div></div>
-    <div class="s"><div class="s-n" style="color:var(--INST)">103</div><div class="s-l">ראיון הדרכתי</div></div>
+    <!-- <div class="s"><div class="s-n" style="color:var(--BG)">853</div><div class="s-l">מועמדי מבחן</div></div> -->
+    <div class="s"><div class="s-n" style="color:var(--A)">224</div><div class="s-l">ביצעו ראיון</div></div>
+    <div class="s"><div class="s-n" style="color:var(--TECH)">108</div><div class="s-l">ראיון טכנולוגי</div></div>
+    <div class="s"><div class="s-n" style="color:var(--INST)">162</div><div class="s-l">ראיון הדרכתי</div></div>
   </div>
 </section>
 
