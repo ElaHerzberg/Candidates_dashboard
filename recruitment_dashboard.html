@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>דשבורד תובנות גיוס</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
     --bg: #0a0c10;
@@ -21,768 +21,893 @@
     --COND: #c47fff;
     --TECH: #f4845f;
     --INST: #3ecf8e;
-    --card-glow: rgba(77,184,255,0.06);
-    --radius: 14px;
-    --radius-sm: 8px;
+    --glow-blue: rgba(77,184,255,0.15);
+    --glow-green: rgba(62,207,142,0.15);
+    --glow-red: rgba(255,95,114,0.15);
+    --glow-purple: rgba(196,127,255,0.15);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { scroll-behavior: smooth; }
+
   body {
-    font-family: 'Heebo', sans-serif;
     background: var(--bg);
     color: var(--text);
+    font-family: 'Heebo', sans-serif;
     min-height: 100vh;
-    direction: rtl;
+    line-height: 1.6;
     overflow-x: hidden;
-    position: relative;
   }
 
-  /* Grid noise overlay */
+  /* ── Subtle grid background ── */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(77,184,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(77,184,255,0.015) 1px, transparent 1px);
+      linear-gradient(rgba(77,184,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,184,255,0.03) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 0;
   }
-
-  /* Ambient glow orbs */
-  .orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.35;
-  }
-  .orb-1 { width: 600px; height: 600px; background: rgba(77,184,255,0.12); top: -200px; left: -100px; }
-  .orb-2 { width: 500px; height: 500px; background: rgba(196,127,255,0.1); bottom: -100px; right: -100px; }
-  .orb-3 { width: 300px; height: 300px; background: rgba(62,207,142,0.08); top: 40%; left: 50%; }
 
   .wrapper {
     position: relative;
     z-index: 1;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 28px 32px 48px;
+    padding: 24px 28px 48px;
   }
 
-  /* ── HEADER ── */
+  /* ══════════════════════════════════════════
+     HEADER
+  ══════════════════════════════════════════ */
   .header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 36px;
-    padding-bottom: 24px;
+    padding: 32px 0 28px;
     border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    gap: 20px;
+    flex-wrap: wrap;
   }
-  .header-brand {
+
+  .header-left {}
+
+  .header-eyebrow {
     display: flex;
     align-items: center;
-    gap: 14px;
-  }
-  .header-icon {
-    width: 46px; height: 46px;
-    background: linear-gradient(135deg, var(--BG), var(--COND));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-    box-shadow: 0 0 24px rgba(77,184,255,0.3);
-  }
-  .header-text h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.3px;
-    line-height: 1.2;
-  }
-  .header-text p {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 3px;
-    font-weight: 400;
-  }
-  .header-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-  }
-  .header-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(62,207,142,0.1);
-    border: 1px solid rgba(62,207,142,0.25);
-    color: var(--A);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .header-badge::before { content: '●'; font-size: 8px; }
-  .header-date {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* ── KPI ROW ── */
-  .kpi-row {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .kpi-card {
-    background: var(--s1);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.25s, transform 0.2s;
-  }
-  .kpi-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(77,184,255,0.3);
-  }
-  .kpi-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--card-glow);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .kpi-card:hover::after { opacity: 1; }
-
-  /* Hero KPI */
-  .kpi-card.hero {
-    background: linear-gradient(135deg, #0e1a2e 0%, #0e1118 100%);
-    border-color: rgba(77,184,255,0.3);
-    box-shadow: 0 0 40px rgba(77,184,255,0.08), inset 0 1px 0 rgba(77,184,255,0.12);
-  }
-  .kpi-card.hero::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 20px; right: 20px; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--BG), transparent);
-  }
-
-  .kpi-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
+    gap: 8px;
     margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .kpi-label-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
   }
 
-  .kpi-value {
-    font-size: 36px;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 6px;
-    font-family: 'JetBrains Mono', monospace;
+  .header-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--A);
+    animation: pulse-dot 2s ease-in-out infinite;
   }
-  .kpi-card.hero .kpi-value {
-    font-size: 42px;
-    background: linear-gradient(135deg, #fff 30%, var(--BG));
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .header-eyebrow span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--A);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .header h1 span {
+    background: linear-gradient(90deg, var(--BG), var(--COND));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .kpi-sub {
-    font-size: 12px;
+  .header-sub {
+    font-size: 13px;
     color: var(--muted);
-    line-height: 1.5;
+    margin-top: 6px;
     font-weight: 400;
   }
 
-  .kpi-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-top: 8px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .badge-danger { background: rgba(255,95,114,0.15); color: var(--FAIL); border: 1px solid rgba(255,95,114,0.25); }
-  .badge-warn   { background: rgba(245,200,66,0.12); color: var(--JR);   border: 1px solid rgba(245,200,66,0.25); }
-  .badge-ok     { background: rgba(62,207,142,0.12); color: var(--A);    border: 1px solid rgba(62,207,142,0.25); }
-  .badge-info   { background: rgba(77,184,255,0.12); color: var(--BG);   border: 1px solid rgba(77,184,255,0.25); }
-
-  /* Pulse animation on hero KPI */
-  @keyframes pulse-ring {
-    0%   { box-shadow: 0 0 0 0 rgba(77,184,255,0.25), 0 0 40px rgba(77,184,255,0.08); }
-    50%  { box-shadow: 0 0 0 10px rgba(77,184,255,0), 0 0 60px rgba(77,184,255,0.16); }
-    100% { box-shadow: 0 0 0 0 rgba(77,184,255,0), 0 0 40px rgba(77,184,255,0.08); }
-  }
-  .kpi-card.hero { animation: pulse-ring 3s ease-in-out infinite; }
-
-  /* ── MAIN GRID ── */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 380px;
-    grid-template-rows: auto auto;
-    gap: 16px;
-    margin-bottom: 16px;
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
   }
 
-  /* ── CARDS ── */
-  .card {
-    background: var(--s1);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-header {
+  .header-badge {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 7px;
+    background: var(--s2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 12px;
+    color: var(--muted);
   }
-  .card-title {
-    font-size: 13px;
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--A);
+  }
+
+  /* ══════════════════════════════════════════
+     KPI ROW
+  ══════════════════════════════════════════ */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .kpi-card {
+    background: var(--s1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 26px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(77,184,255,0.3);
+  }
+
+  /* Glow accent top border */
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .kpi-card.kpi-primary::before { background: linear-gradient(90deg, var(--BG), var(--COND)); }
+  .kpi-card.kpi-warn::before    { background: linear-gradient(90deg, var(--FAIL), var(--JR)); }
+  .kpi-card.kpi-info::before    { background: linear-gradient(90deg, var(--COND), var(--BG)); }
+
+  /* Ambient glow bg */
+  .kpi-card.kpi-primary::after {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(77,184,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .kpi-label {
+    font-size: 12px;
     font-weight: 600;
-    color: var(--text);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .kpi-value {
+    font-size: clamp(28px, 3.5vw, 42px);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-value.pulse-anim {
+    animation: kpi-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes kpi-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  .kpi-value.color-blue  { color: var(--BG); }
+  .kpi-value.color-red   { color: var(--FAIL); }
+  .kpi-value.color-cond  { color: var(--COND); }
+
+  .kpi-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .kpi-sub-row {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  .card-title-icon {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-  .card-pill {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    background: rgba(77,184,255,0.1);
-    color: var(--BG);
-    border: 1px solid rgba(77,184,255,0.2);
+    margin-top: 10px;
   }
 
-  .chart-wrap { position: relative; }
-
-  /* ── INSIGHTS PANEL ── */
-  .insights-panel {
-    grid-column: 3;
-    grid-row: 1 / 3;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .insight-card {
-    background: var(--s2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    position: relative;
-    transition: border-color 0.2s;
-  }
-  .insight-card:hover { border-color: rgba(77,184,255,0.25); }
-
-  .insight-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .insight-num {
-    width: 24px; height: 24px;
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    font-weight: 800;
-    flex-shrink: 0;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .insight-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.3;
-  }
-  .insight-body {
-    font-size: 11.5px;
-    color: var(--muted);
-    line-height: 1.65;
-    padding-right: 34px;
-  }
-  .insight-tag {
+  .kpi-chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-top: 8px;
-    letter-spacing: 0.3px;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
   }
 
-  /* severity colors */
-  .sev-critical { background: rgba(255,95,114,0.12); color: var(--FAIL); border: 1px solid rgba(255,95,114,0.2); }
-  .sev-medium   { background: rgba(245,200,66,0.1);  color: var(--JR);   border: 1px solid rgba(245,200,66,0.2); }
-  .sev-positive { background: rgba(62,207,142,0.1);  color: var(--A);    border: 1px solid rgba(62,207,142,0.2); }
+  .chip-green  { background: rgba(62,207,142,0.15); color: var(--A); }
+  .chip-red    { background: rgba(255,95,114,0.15); color: var(--FAIL); }
+  .chip-blue   { background: rgba(77,184,255,0.15); color: var(--BG); }
+  .chip-purple { background: rgba(196,127,255,0.15); color: var(--COND); }
+  .chip-orange { background: rgba(244,132,95,0.15); color: var(--TECH); }
 
-  .insight-num.critical { background: rgba(255,95,114,0.15); color: var(--FAIL); }
-  .insight-num.medium   { background: rgba(245,200,66,0.15); color: var(--JR); }
-  .insight-num.positive { background: rgba(62,207,142,0.15); color: var(--A); }
-
-  .panel-section-title {
-    font-size: 11px;
-    font-weight: 700;
+  /* ══════════════════════════════════════════
+     CHARTS SECTION
+  ══════════════════════════════════════════ */
+  .section-label {
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
     color: var(--muted);
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--border);
   }
 
-  /* ── BOTTOM GRID: Charts 2 + 3 ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.85fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .chart-card {
+    background: var(--s1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .chart-card:hover {
+    border-color: rgba(77,184,255,0.25);
+  }
+
+  .chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .chart-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .chart-canvas-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  /* ══════════════════════════════════════════
+     BOTTOM GRID: Insights + Actions
+  ══════════════════════════════════════════ */
   .bottom-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 380px;
+    grid-template-columns: 1fr;
     gap: 16px;
-    margin-bottom: 16px;
   }
 
+  /* Strategic Insights */
+  .insights-card {
+    background: var(--s1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 28px;
+  }
 
-
-  /* ── FOOTER ── */
-  .footer {
+  .insights-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
+    gap: 10px;
   }
-  .footer-left {
-    font-size: 11px;
-    color: var(--muted);
+
+  .insights-title .icon-wrap {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--glow-purple);
+    border: 1px solid rgba(196,127,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+
+  .insight-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .insight-item:last-child { border-bottom: none; }
+
+  .insight-num {
     font-family: 'JetBrains Mono', monospace;
-  }
-  .legend-row {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
     font-size: 11px;
-    color: var(--muted);
-  }
-  .legend-dot {
-    width: 8px; height: 8px;
-    border-radius: 2px;
+    font-weight: 600;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
     flex-shrink: 0;
   }
 
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .insight-num.n1 { background: rgba(255,95,114,0.2); color: var(--FAIL); }
+  .insight-num.n2 { background: rgba(244,132,95,0.2); color: var(--TECH); }
+  .insight-num.n3 { background: rgba(196,127,255,0.2); color: var(--COND); }
+  .insight-num.n4 { background: rgba(77,184,255,0.2); color: var(--BG); }
+  .insight-num.n5 { background: rgba(62,207,142,0.2); color: var(--A); }
 
-  /* entry animation */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .kpi-card  { animation: fadeUp 0.5s ease both; }
-  .kpi-card:nth-child(1) { animation-delay: 0.05s; }
-  .kpi-card:nth-child(2) { animation-delay: 0.12s; }
-  .kpi-card:nth-child(3) { animation-delay: 0.19s; }
-  .kpi-card:nth-child(4) { animation-delay: 0.26s; }
-  .card { animation: fadeUp 0.55s ease both; animation-delay: 0.3s; }
-  .checklist-section { animation: fadeUp 0.55s ease both; animation-delay: 0.4s; }
+  .insight-body {}
 
-  /* divider line accent */
-  .accent-line {
-    height: 2px;
-    background: linear-gradient(90deg, var(--BG), var(--COND), transparent);
-    border-radius: 2px;
-    margin-bottom: 24px;
-    opacity: 0.6;
+  .insight-heading {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
   }
 
-  /* mini stat row inside a card */
-  .mini-stats {
+  .insight-text {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .insight-tag {
+    display: inline-block;
+    margin-top: 7px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Actions card */
+  .actions-card {
+    background: var(--s1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .actions-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .actions-title .icon-wrap {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    background: rgba(62,207,142,0.12);
+    border: 1px solid rgba(62,207,142,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  .action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.15s;
+  }
+
+  .action-item:last-child { border-bottom: none; }
+
+  .action-check {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .action-item.checked .action-check {
+    background: var(--A);
+    border-color: var(--A);
+  }
+
+  .action-item.checked .action-check::after {
+    content: '✓';
+    color: #0a0c10;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .action-item.checked .action-text {
+    text-decoration: line-through;
+    opacity: 0.45;
+  }
+
+  .action-text {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+    transition: opacity 0.2s;
+  }
+
+  .action-priority {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .priority-high   { color: var(--FAIL); }
+  .priority-medium { color: var(--JR); }
+  .priority-low    { color: var(--A); }
+
+  /* ══════════════════════════════════════════
+     FUNNEL ROW (between charts and bottom)
+  ══════════════════════════════════════════ */
+  .funnel-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .funnel-step {
+    background: var(--s1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .funnel-step:hover {
+    transform: translateY(-2px);
+    border-color: rgba(77,184,255,0.25);
+  }
+
+  .funnel-step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .funnel-step.s-total::before   { background: var(--BG); }
+  .funnel-step.s-exam::before    { background: var(--COND); }
+  .funnel-step.s-interview::before { background: var(--JR); }
+  .funnel-step.s-b::before       { background: var(--A); }
+  .funnel-step.s-a::before       { background: var(--BG); }
+  .funnel-step.s-jr::before      { background: var(--JR); }
+
+  .funnel-n {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .funnel-step.s-total   .funnel-n { color: var(--BG); }
+  .funnel-step.s-exam    .funnel-n { color: var(--COND); }
+  .funnel-step.s-interview .funnel-n { color: var(--JR); }
+  .funnel-step.s-b       .funnel-n { color: var(--A); }
+  .funnel-step.s-a       .funnel-n { color: var(--BG); }
+  .funnel-step.s-jr      .funnel-n { color: var(--JR); }
+
+  .funnel-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .funnel-rate {
+    margin-top: 5px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+  }
+
+  /* ══════════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════════ */
+  .footer {
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-text {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .footer-legend {
     display: flex;
     gap: 16px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
   }
-  .mini-stat { text-align: center; flex: 1; }
-  .mini-stat-val {
-    font-size: 20px;
-    font-weight: 800;
-    font-family: 'JetBrains Mono', monospace;
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-  .mini-stat-lbl { font-size: 10px; color: var(--muted); font-weight: 500; }
 
-  /* Tooltip override for Chart.js */
-  .chartjs-tooltip { font-family: 'Heebo', sans-serif !important; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════════ */
+  @media (max-width: 1100px) {
+    .charts-grid { grid-template-columns: 1fr 1fr; }
+    .charts-grid .chart-card:nth-child(3) { grid-column: span 2; }
+    .bottom-grid { grid-template-columns: 1fr; }
+    .funnel-row { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 700px) {
+    .kpi-row { grid-template-columns: 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .charts-grid .chart-card:nth-child(3) { grid-column: span 1; }
+    .funnel-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Scan-line animation on hover over chart cards */
+  .chart-card::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0; right: 0;
+    height: 100%;
+    background: linear-gradient(transparent 40%, rgba(77,184,255,0.03) 50%, transparent 60%);
+    pointer-events: none;
+    transition: top 0.8s ease;
+  }
+
+  .chart-card:hover::after {
+    top: 100%;
+  }
 </style>
 </head>
 <body>
-
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
-
 <div class="wrapper">
 
-  <!-- HEADER -->
+  <!-- ══ HEADER ══ -->
   <header class="header">
-    <div class="header-brand">
-      <div class="header-icon">📊</div>
-      <div class="header-text">
-        <h1>דשבורד תובנות גיוס — ניתוח תהליך מיון</h1>
-        <p>מנהלי HR ומנהלי תוכנית · ניתוח 224 מועמדים · מסלול פייתון</p>
+    <div class="header-left">
+      <div class="header-eyebrow">
+        <div class="header-dot"></div>
+        <span>Recruitment Intelligence </span>
       </div>
+      <h1><br><span>ניתוח תהליך מיון מדריכים</span></h1>
+      <p class="header-sub"> · ניתוח תהליך גיוס מדריכי Python</p>
     </div>
-    <div class="header-meta">
-      <!-- <span class="header-badge">ניתוח פעיל</span> -->
-      <span class="header-date">עדכון: מרץ 2026</span>
+    <div class="header-right">
+      <div class="header-badge">
+        <div class="badge-dot"></div>
+        תאריך עדכון אחרון: מרץ 2026
+      </div>
+      <!-- <div class="header-badge">
+        <div class="badge-dot" style="background:var(--COND)"></div>
+        עומק ניתוח: Root Cause Analysis
+      </div> -->
     </div>
   </header>
 
-  <div class="accent-line"></div>
-
-  <!-- KPI ROW -->
+  <!-- ══ KPI ROW ══ -->
   <div class="kpi-row">
-    <!-- Hero KPI -->
-    <div class="kpi-card hero">
-      <div class="kpi-label" style="color: var(--BG);">
-        <span class="kpi-label-dot"></span>
-        פוטנציאל חיסכון מיידי
+
+    <div class="kpi-card kpi-primary">
+      <div class="kpi-label">⚡ יעילות תפעולית – זמן שניתן לחסוך</div>
+      <div class="kpi-value color-blue pulse-anim">12–18 שעות</div>
+      <div class="kpi-desc">ראיון ניתן לחסוך על בסיס אינדיקטורים שזוהו כבר בשלב המבחן הידני</div>
+      <div class="kpi-sub-row">
+        <span class="kpi-chip chip-blue">~10 מועמדים לסינון מוקדם</span>
+        <!-- <span class="kpi-chip chip-green">↑ ROI תהליך</span> -->
       </div>
-      <div class="kpi-value">18h</div>
-      <div class="kpi-sub">12–18 שעות ראיון שניתן לחסוך לסבב<br>על בסיס פסילה מוקדמת מבוססת-נתונים</div>
-      <span class="kpi-badge badge-info">≈ 8+ מועמדים לפסילה מוקדמת</span>
     </div>
 
-    <!-- Risk KPI -->
-    <div class="kpi-card">
-      <div class="kpi-label" style="color: var(--FAIL);">
-        <span class="kpi-label-dot"></span>
-        אינדיקטור סיכון הדרכתי
+    <div class="kpi-card kpi-warn">
+      <div class="kpi-label">⚠️ אינדיקטור כשלון ראיונות</div>
+      <div class="kpi-value color-red">~18%</div>
+      <div class="kpi-desc">מועמדים שבמבחן תשובת מישוב החניך ("ליבי") אובחנה כ"רשימת מכולת" / לא אישית / לא מותאמת לתלמיד</div>
+      <div class="kpi-sub-row">
+        <span class="kpi-chip chip-red">פרדיקטור</span>
       </div>
-      <div class="kpi-value" style="color: var(--FAIL);">~35%</div>
-      <div class="kpi-sub">מועמדים עם פידבק "רשימת מכולת"<br>ללא פנייה אישית בתשובת ליבי</div>
-      <span class="kpi-badge badge-danger">90%+ כישלון הדרכתי</span>
     </div>
 
-    <!-- Mismatch KPI -->
-    <div class="kpi-card">
-      <div class="kpi-label" style="color: var(--JR);">
-        <span class="kpi-label-dot"></span>
-        פער מבחן ← ראיון
+    <div class="kpi-card kpi-info">
+      <div class="kpi-label">📉 פער רמה – מבחן לראיון</div>
+      <div class="kpi-value color-cond">~36%</div>
+      <div class="kpi-desc">מועמדים שעברו מבחן לשנה ב' ירדו רמה או נכשלו בראיון</div>
+      <div class="kpi-sub-row">
+        <span class="kpi-chip chip-purple">19 עברו לשנה א'</span>
+        <span class="kpi-chip chip-purple">15 לא עברו</span>
       </div>
-      <div class="kpi-value" style="color: var(--JR);">24%</div>
-      <div class="kpi-sub">ירידה ברמה מהמבחן לראיון<br>מתוך מועמדי ב'/ג' (23 מתוך 96)</div>
-      <span class="kpi-badge badge-warn">צוואר בקבוק בתהליך</span>
     </div>
 
-    <!-- Pass rate KPI -->
-    <div class="kpi-card">
-      <div class="kpi-label" style="color: var(--A);">
-        <span class="kpi-label-dot"></span>
-        שיעור מעבר ראיון 2
-      </div>
-      <div class="kpi-value" style="color: var(--A);">76%</div>
-      <div class="kpi-sub">מועמדים שעברו ראיון 2<br>מסה"כ המועמדים שהגיעו לשלב</div>
-      <span class="kpi-badge badge-ok">יעד: 85%+ עם אופטימיזציה</span>
+  </div>
+
+  <!-- ══ FUNNEL ROW ══ -->
+  <p class="section-label">// משפך המיון – מתחילה לשיבוץ</p>
+  <div class="funnel-row">
+    <div class="funnel-step s-total">
+      <div class="funnel-n">224</div>
+      <div class="funnel-label">סה"כ מועמדים</div>
+      <div class="funnel-rate">— 100%</div>
+    </div>
+    <div class="funnel-step s-exam">
+      <div class="funnel-n">195</div>
+      <div class="funnel-label">עברו מבחן מיון</div>
+      <div class="funnel-rate">— 87%</div>
+    </div>
+    <div class="funnel-step s-interview">
+      <div class="funnel-n">157</div>
+      <div class="funnel-label">הגיעו לראיון</div>
+      <div class="funnel-rate">— 70%</div>
+    </div>
+    <div class="funnel-step s-b">
+      <div class="funnel-n">53</div>
+      <div class="funnel-label">שנה ב'</div>
+      <div class="funnel-rate">— 24%</div>
+    </div>
+    <div class="funnel-step s-a">
+      <div class="funnel-n">58</div>
+      <div class="funnel-label">שנה א'</div>
+      <div class="funnel-rate">— 26%</div>
+    </div>
+    <div class="funnel-step s-jr">
+      <div class="funnel-n">24</div>
+      <div class="funnel-label">ג'וניור</div>
+      <div class="funnel-rate">— 11%</div>
     </div>
   </div>
 
-  <!-- MAIN GRID: Chart1 + Chart3 + Insights Panel -->
-  <div class="main-grid">
+  <!-- ══ CHARTS GRID ══ -->
+  <p class="section-label">// ניתוח ויזואלי – פערים, שיבוץ ופילטור</p>
+  <div class="charts-grid">
 
     <!-- Chart 1: Gap Distribution -->
-    <div class="card" style="grid-column: 1; grid-row: 1;">
-      <div class="card-header">
-        <div class="card-title">
-          <div class="card-title-icon" style="background: rgba(255,95,114,0.12);">📉</div>
-          התפלגות פערים שאובחנו
-        </div>
-        <span class="card-pill">Root Cause</span>
-      </div>
-      <div class="chart-wrap" style="height: 230px;">
+    <div class="chart-card">
+      <div class="chart-title">פילוח סוגי פערים שזוהו</div>
+      <div class="chart-sub">לפי הופעה בהערות ראיון — כל מועמד יכול להכיל יותר מסוג אחד</div>
+      <div class="chart-canvas-wrap" style="height:240px;">
         <canvas id="chartGaps"></canvas>
       </div>
-      <div class="mini-stats">
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--FAIL);">49</div>
-          <div class="mini-stat-lbl">פער מקצועי</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--JR);">17</div>
-          <div class="mini-stat-lbl">פער עומק</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--COND);">20</div>
-          <div class="mini-stat-lbl">פער הדרכתי</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--TECH);">14</div>
-          <div class="mini-stat-lbl">פער התאמה</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--BG);">4</div>
-          <div class="mini-stat-lbl">פער מבני</div>
-        </div>
-      </div>
     </div>
 
-    <!-- Chart 3: Pre-filter donut -->
-    <div class="card" style="grid-column: 2; grid-row: 1;">
-      <div class="card-header">
-        <div class="card-title">
-          <div class="card-title-icon" style="background: rgba(62,207,142,0.1);">🔍</div>
-          מועמדים לפי אפשרות פסילה מוקדמת
-        </div>
-        <span class="card-pill">אופטימיזציה</span>
-      </div>
-      <div class="chart-wrap" style="height: 200px;">
-        <canvas id="chartFilter"></canvas>
-      </div>
-      <div class="mini-stats">
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--FAIL);">8</div>
-          <div class="mini-stat-lbl">פסילה מוקדמת</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--JR);">14</div>
-          <div class="mini-stat-lbl">מעקב נדרש</div>
-        </div>
-        <div class="mini-stat">
-          <div class="mini-stat-val" style="color:var(--A);">119</div>
-          <div class="mini-stat-lbl">עברו תקין</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Insights Panel -->
-    <div class="insights-panel">
-      <div class="panel-section-title">🧠 ניתוח Root Cause — תובנות מרכזיות</div>
-
-      <div class="insight-card">
-        <div class="insight-header">
-          <span class="insight-num critical">01</span>
-          <div class="insight-title">הפער הפדגוגי — פתרון סופי במקום הנחיה</div>
-        </div>
-        <div class="insight-body">
-          מועמדים שנתנו את הפתרון הסופי בתשובת הליבי (במקום להנחות את הלומד לגלות בעצמו) קיבלו ציון גבוה במבחן — אך נכשלו בראיון ההדרכתי. המבחן הקיים אינו מודד אינטואיציה פדגוגית.
-        </div>
-        <span class="insight-tag sev-critical">🔴 קריטי · משפיע על 23 מועמדים</span>
-      </div>
-
-      <div class="insight-card">
-        <div class="insight-header">
-          <span class="insight-num critical">02</span>
-          <div class="insight-title">אינדיקטור "רשימת מכולת" — מנבא כישלון הדרכתי</div>
-        </div>
-        <div class="insight-body">
-          פידבק בסגנון "רשימת שגיאות יבשה" ללא פנייה אישית ואמפתית לליבי — מנבא כישלון ב-90%+ בראיון ההדרכתי. היעדר גישה אישית אינו ניתן לאימון מהיר.
-        </div>
-        <span class="insight-tag sev-critical">🔴 קריטי · פסילה מוקדמת מוצדקת</span>
-      </div>
-
-      <div class="insight-card">
-        <div class="insight-header">
-          <span class="insight-num medium">03</span>
-          <div class="insight-title">קשר בין סדר בכתיבה לסדר בהדרכה</div>
-        </div>
-        <div class="insight-body">
-          "מבולגן" בהסבר כתוב (עברית מבנית / ליבי) חזר כמעט תמיד עם חוסר מבנה בהדרכה בעל-פה. הכתיבה היא "proxy" אמין לאיכות ההדרכה.
-        </div>
-        <span class="insight-tag sev-medium">🟡 בינוני · ירידת רמה ב-70% מהמקרים</span>
-      </div>
-
-      <div class="insight-card">
-        <div class="insight-header">
-          <span class="insight-num positive">04</span>
-          <div class="insight-title">מנבא חיובי — "בסדר גמור" × 4+</div>
-        </div>
-        <div class="insight-body">
-          כאשר הבודק ציין 4+ קטגוריות כ"בסדר גמור/אחלה/מצוין", המועמד עבר ב-85%+ מהמקרים. ניתן ל-Fast-track ישירות לראיון הדרכתי מורחב.
-        </div>
-        <span class="insight-tag sev-positive">🟢 חיובי · Fast-track מוצדק</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM GRID: Level comparison chart + 3rd insight + Action items in col 3 -->
-  <div class="bottom-grid">
-
-    <!-- Chart 2: Level comparison -->
-    <div class="card" style="grid-column: 1 / 3;">
-      <div class="card-header">
-        <div class="card-title">
-          <div class="card-title-icon" style="background: rgba(196,127,255,0.1);">📊</div>
-          רמת מבחן מול תוצאת ראיון — פירוט ירידות רמה
-        </div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <span style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#ff9f43;background:rgba(255,159,67,0.1);border:1px solid rgba(255,159,67,0.25);padding:3px 9px;border-radius:4px;font-weight:700;">⚠️ ב'/ג' → א' (20 מועמדים)</span>
-          <span class="card-pill">Stacked</span>
-        </div>
-      </div>
-      <div class="chart-wrap" style="height: 220px;">
+    <!-- Chart 2: Exam Level → Final Placement (Stacked) -->
+    <div class="chart-card">
+      <div class="chart-title">לאן הגיע כל מי שעבר מבחן — לפי רמת מבחן</div>
+      <div class="chart-sub">כל עמודה = רמת מבחן ידני · כל צבע = תוצאת ראיונות · n=195</div>
+      <div class="chart-canvas-wrap" style="height:240px;">
         <canvas id="chartLevels"></canvas>
       </div>
     </div>
 
-    <!-- Action checklist column 3 — combined with extra insight -->
-    <div style="grid-column: 3; display: flex; flex-direction: column; gap: 12px;">
-      <div class="insight-card" style="background: var(--s1); border-color: rgba(196,127,255,0.25);">
-        <div class="insight-header">
-          <span class="insight-num" style="background:rgba(196,127,255,0.15); color:var(--COND);">05</span>
-          <div class="insight-title">שגיאת ירושה = פער עומק</div>
-        </div>
-        <div class="insight-body">
-          מועמדים עם ציון ג'וניור + שגיאת ירושה בתרשים מחלקות — נכשלו ב-60%+ בשאלות עומק בראיון הטכנולוגי. המלצה: ראיון מקוצר 20 דק' בלבד.
-        </div>
-        <span class="insight-tag sev-medium">🟡 ניתן לאוטומציה חלקית</span>
+    <!-- Chart 3: Early Filter Potential -->
+    <div class="chart-card">
+      <div class="chart-title">פוטנציאל סינון מוקדם</div>
+      <div class="chart-sub">מתוך הנכשלים — מה ניתן היה לזהות מוקדם</div>
+      <div class="chart-canvas-wrap" style="height:180px; display:flex; justify-content:center;">
+        <canvas id="chartFilter" style="max-width:220px;"></canvas>
       </div>
-
-      <div class="insight-card" style="background: var(--s1); border-color: rgba(255,95,114,0.3);">
-        <div class="insight-header">
-          <span class="insight-num critical">06</span>
-          <div class="insight-title">טון פנייה לליבי — אינדיקטור לכישלון ראיון</div>
-        </div>
-        <div class="insight-body">
-          מועמד שפנה לליבי בלשון קרה, בגוף שלישי, או ללא פרגון מינימלי — נכשל בראיון ההדרכתי בשיעור גבוה. <strong style="color:var(--text);">הוספת שדה "טון פנייה" (1–5) לטופס הבדיקה הידנית</strong> מנבאת 70%+ מהכישלונות ההדרכתיים כבר בשלב המבחן.
-        </div>
-        <span class="insight-tag sev-critical">🔴 קריטריון חסר ברובריקה הנוכחית</span>
-      </div>
-
-      <div class="insight-card" style="background: var(--s1); border-color: rgba(244,132,95,0.3);">
-        <div class="insight-header">
-          <span class="insight-num" style="background:rgba(244,132,95,0.15); color:var(--TECH);">07</span>
-          <div class="insight-title">מבנה הסברתי — proxy לאיכות ההדרכה</div>
-        </div>
-        <div class="insight-body">
-          מועמד שכתב "בעיה → סיבה → פתרון → בדיקה" בהסבר הליבי הדגים מבנה הדרכתי ברור גם בראיון. מועמד שנתן <strong style="color:var(--text);">רשימה שטוחה ללא מבנה</strong> — נכשל ב-70%+ בראיון ב'. <strong style="color:var(--text);">הוספת שדה בינארי כן/לא</strong> לטופס מאפשרת ניתוב אוטומטי לרמת ראיון נמוכה יותר.
-        </div>
-        <span class="insight-tag" style="background:rgba(244,132,95,0.1); color:var(--TECH); border:1px solid rgba(244,132,95,0.25);">🟠 ניתוב אוטומטי לרמת ראיון</span>
-      </div>
-
-      <div class="insight-card" style="background: var(--s1);">
-        <div class="panel-section-title" style="margin-bottom:10px;">📈 התפלגות ראיון 2</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div style="background:rgba(77,184,255,0.08); border:1px solid rgba(77,184,255,0.2); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:22px; font-weight:900; color:var(--BG); font-family:'JetBrains Mono',monospace;">41</div>
-            <div style="font-size:10px; color:var(--muted);">עבר לשנה ב'</div>
-          </div>
-          <div style="background:rgba(62,207,142,0.08); border:1px solid rgba(62,207,142,0.2); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:22px; font-weight:900; color:var(--A); font-family:'JetBrains Mono',monospace;">38</div>
-            <div style="font-size:10px; color:var(--muted);">עבר לשנה א'</div>
-          </div>
-          <div style="background:rgba(245,200,66,0.08); border:1px solid rgba(245,200,66,0.2); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:22px; font-weight:900; color:var(--JR); font-family:'JetBrains Mono',monospace;">21</div>
-            <div style="font-size:10px; color:var(--muted);">ג'וניור</div>
-          </div>
-          <div style="background:rgba(255,95,114,0.08); border:1px solid rgba(255,95,114,0.2); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:22px; font-weight:900; color:var(--FAIL); font-family:'JetBrains Mono',monospace;">22</div>
-            <div style="font-size:10px; color:var(--muted);">לא עבר</div>
-          </div>
-        </div>
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:3px;background:var(--FAIL);flex-shrink:0;display:block"></span>ניתן לסינון מוקדם — 10 מועמדים</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:3px;background:var(--JR);flex-shrink:0;display:block"></span>קשה לחיזוי מוקדם — 5 מועמדים</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)"><span style="width:10px;height:10px;border-radius:3px;background:var(--border);flex-shrink:0;display:block"></span>ללא מידע מספיק — 15 מועמדים</div>
       </div>
     </div>
+
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer-left">analysis_v1.0 · n=224 candidates · python_track</div>
-    <div class="legend-row">
-      <div class="legend-item"><span class="legend-dot" style="background:var(--BG)"></span>שנה ב'</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#ff9f43"></span>ב'/ג' → א' (ירידה)</div>
-      <div class="legend-item"><span class="legend-dot" style="background:var(--A)"></span>שנה א'</div>
+  <!-- ══ BOTTOM GRID: Insights + Actions ══ -->
+  <div class="bottom-grid">
+
+    <!-- Strategic Insights -->
+    <div class="insights-card">
+      <div class="insights-title">
+        <span class="icon-wrap">🔬</span>
+        ניתוח שורש — Root Cause Analysis
+      </div>
+
+      <div class="insight-item">
+        <div class="insight-num n1">01</div>
+        <div class="insight-body">
+          <div class="insight-heading">הפער הפדגוגי — פתרון סופי במקום הנחיה</div>
+          <div class="insight-text">
+            מאפיין החוזר ב-8 מ-15 מועמדים שנכשלו: המועמד ידע את החומר טכנית אך נתן לתלמיד את התשובה במקום לכוון אותו. ניתן לחיזוי כישלון בראיון ע"ב תשובת מישוב לא טובה. 
+          </div>
+          <div>
+            <span class="insight-tag chip-red">Final Solution vs. Guidance</span>
+            <span class="insight-tag chip-blue" style="margin-right:6px;">8 מקרים</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-item">
+        <div class="insight-num n2">02</div>
+        <div class="insight-body">
+          <div class="insight-heading">אינדיקטור "רשימת מכולת" — ניבוי כישלון הדרכתי</div>
+          <div class="insight-text">
+            תגובת "ליבי" שמפרטת שגיאות כרשימה, ללא פנייה אישית, ללא חיזוק חיובי -> מנבאת בסבירות גבוהה כישלון בסימולציה הדרכתית. הדפוס זוהה ב-5 מקרים מובהקים, כולם נכשלו בראיון ההדרכתי. האינדיקטור ניתן לזיהוי אוטומטי.
+          </div>
+          <div>
+            <span class="insight-tag chip-orange">Instructional Gap</span>
+            <span class="insight-tag chip-red" style="margin-right:6px;">פרדיקטור</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-item">
+        <div class="insight-num n3">03</div>
+        <div class="insight-body">
+          <div class="insight-heading">קשר בין סדר בכתיבה לסדר בהדרכה</div>
+          <div class="insight-text">
+            מועמדים שהסבריהם הכתובים היו "מבולגנים" או "ללא רצף" (הערת הבודק), נטו להצטיין טכנית אך להכשל בבניית תהליך שיעור קוהרנטי. הפער במבנה התשובה במבחן נמצא בקורלציה עם הפער במבנה הסימולציה - סימפטום מנבא.
+          </div>
+          <div>
+            <span class="insight-tag chip-purple">Structural Gap</span>
+            <span class="insight-tag chip-blue" style="margin-right:6px;">קורלציה 0.67</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="insight-item">
+        <div class="insight-num n4">04</div>
+        <div class="insight-body">
+          <div class="insight-heading">אי-כיול מסלול פייתון האוטומטי — רמות ביניים</div>
+          <div class="insight-text">
+            4 מקרים שבהם האלגוריתם האוטומטי אמר "לא עבר" ואילו הבודק הידני העלה לא' / ב'/ג'. האוטומציה מכוילת טוב לקצוות (ברור עובר / ברור נכשל) אך מחמיצה רמות ביניים. שגיאת ירושות ב-OOP לא מנוקדת מספיק.
+          </div>
+          <div>
+            <span class="insight-tag chip-blue">Calibration Gap</span>
+            <span class="insight-tag chip-orange" style="margin-right:6px;">4 מקרים</span>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- <div class="insight-item">
+        <div class="insight-num n5">05</div>
+        <div class="insight-body">
+          <div class="insight-heading">44% אי-הסכמה בין מראיינים — צורך בתקנון</div>
+          <div class="insight-text">
+            מתוך 143 מקרים עם שני ראיונות, ב-63 (44%) הייתה אי-הסכמה על הרמה. חלק מהפערים נגרמו מ"לא רלוונטי" בראיון 1 (שבוצע הדרכתי בלבד). גם בפסיקה מהותית ישנה שונות גבוהה שמצביעה על היעדר רובריקה משותפת.
+          </div>
+          <div>
+            <span class="insight-tag chip-green">Adaptation to Learner</span>
+            <span class="insight-tag chip-red" style="margin-right:6px;">63 / 143 מקרים</span>
+          </div>
+        </div>
+      </div> -->
+
+    </div>
+
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="footer">
+    <div class="footer-text">// Nitzanim Program · 224 candidates analyzed</div>
+    <div class="footer-legend">
+      <div class="legend-item"><span class="legend-dot" style="background:var(--A)"></span>שנה ב'</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--BG)"></span>שנה א'</div>
       <div class="legend-item"><span class="legend-dot" style="background:var(--JR)"></span>ג'וניור</div>
-      <div class="legend-item"><span class="legend-dot" style="background:var(--FAIL)"></span>לא עבר</div>
-      <div class="legend-item"><span class="legend-dot" style="background:var(--COND)"></span>תנאי/ראיון</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--FAIL)"></span>נכשל</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--COND)"></span>תנאי</div>
     </div>
-  </div>
+  </footer>
 
 </div><!-- /wrapper -->
 
 <script>
-// ── Shared Chart.js defaults ──────────────────────────────────────
-Chart.defaults.color = '#8892a4';
+/* ──────────────────────────────────────────────────────
+   Global Chart defaults
+────────────────────────────────────────────────────── */
 Chart.defaults.font.family = "'Heebo', sans-serif";
-Chart.defaults.font.size = 11;
+Chart.defaults.color = '#8892a4';
+Chart.defaults.plugins.legend.display = false;
 
 const COLORS = {
-  JR: '#f5c842', A: '#3ecf8e', BG: '#4db8ff',
-  FAIL: '#ff5f72', COND: '#c47fff', TECH: '#f4845f', INST: '#3ecf8e',
-  border: '#1e2436', muted: '#8892a4'
+  BG:   '#4db8ff',
+  A:    '#3ecf8e',
+  JR:   '#f5c842',
+  FAIL: '#ff5f72',
+  COND: '#c47fff',
+  TECH: '#f4845f',
+  INST: '#3ecf8e',
+  border: '#1e2436',
 };
 
-function hexAlpha(hex, a) {
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
-  return `rgba(${r},${g},${b},${a})`;
-}
+/* ──────────────────────────────────────────────────────
+   CHART 1 — Gap Distribution (Horizontal Bar)
+────────────────────────────────────────────────────── */
+const ctxGaps = document.getElementById('chartGaps').getContext('2d');
 
-// ── Chart 1: Gap Distribution (Horizontal Bar) ────────────────────
-const ctx1 = document.getElementById('chartGaps').getContext('2d');
-new Chart(ctx1, {
+const gapLabels = [
+  'פער מקצועי\nProfessional Gap',
+  'פער הדרכתי\nInstructional Gap',
+  'פער מבני\nStructural Gap',
+  'התאמה ללומד\nAdaptation to Learner',
+  'פתרון סופי\nFinal Solution vs. Guidance',
+];
+
+const gapData   = [57, 35, 7, 5, 8];
+const gapColors = [COLORS.BG, COLORS.INST, COLORS.COND, COLORS.TECH, COLORS.FAIL];
+
+new Chart(ctxGaps, {
   type: 'bar',
   data: {
-    labels: ['פער מקצועי', 'פער עומק (מקצועי)', 'פער ביכולות הדרכה', 'פער בהתאמה ללומד', 'פער מבני'],
+    labels: ['פער מקצועי', 'פער הדרכתי', 'פער מבני', 'התאמה ללומד', 'פתרון סופי'],
     datasets: [{
-      label: 'מספר מועמדים',
-      data: [49, 17, 20, 14, 4],
-      backgroundColor: [
-        hexAlpha(COLORS.FAIL, 0.75),
-        hexAlpha(COLORS.JR, 0.75),
-        hexAlpha(COLORS.COND, 0.75),
-        hexAlpha(COLORS.TECH, 0.75),
-        hexAlpha(COLORS.BG, 0.75),
-      ],
-      borderColor: [COLORS.FAIL, COLORS.JR, COLORS.COND, COLORS.TECH, COLORS.BG],
-      borderWidth: 1.5,
+      data: gapData,
+      backgroundColor: gapColors.map(c => c + '33'),
+      borderColor: gapColors,
+      borderWidth: 2,
       borderRadius: 6,
       borderSkipped: false,
     }]
@@ -792,210 +917,210 @@ new Chart(ctx1, {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.parsed.x} מועמדים`,
+        },
+        backgroundColor: '#141821',
+        borderColor: '#1e2436',
+        borderWidth: 1,
+        titleColor: '#dde4f5',
+        bodyColor: '#8892a4',
+        padding: 10,
+        rtl: true,
+        titleFont: { family: 'Heebo', size: 12 },
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: '#1e2436' },
+        ticks: { color: '#8892a4', font: { size: 10 } },
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          color: '#dde4f5',
+          font: { size: 11, weight: '600' },
+          mirror: false,
+        }
+      }
+    },
+    animation: {
+      duration: 900,
+      easing: 'easeOutQuart',
+    }
+  }
+});
+
+/* ──────────────────────────────────────────────────────
+   CHART 2 — Exam Level → Final Placement (Stacked Bar)
+   Each bar = exam level, each segment = where they ended up
+────────────────────────────────────────────────────── */
+const ctxLevels = document.getElementById('chartLevels').getContext('2d');
+
+// Labels = exam levels (low → high)
+// Data = real cross-tab from the dataset
+const stackedDatasets = [
+  { label: "שנה ב'",          data: [0,  3, 51], backgroundColor: COLORS.A    + 'cc', borderColor: COLORS.A,    borderWidth: 1 },
+  { label: "שנה א'",          data: [5, 34, 19], backgroundColor: COLORS.BG   + 'cc', borderColor: COLORS.BG,   borderWidth: 1 },
+  { label: "ג'וניור",         data: [14,10,  0], backgroundColor: COLORS.JR   + 'cc', borderColor: COLORS.JR,   borderWidth: 1 },
+  { label: 'לא עבר',          data: [7,  8, 15], backgroundColor: COLORS.FAIL + 'cc', borderColor: COLORS.FAIL, borderWidth: 1 },
+  { label: 'לא ביצע ראיון/הסיר מועמדות',   data: [10,  7,  9], backgroundColor: '#555e7a'   + 'cc', borderColor: '#555e7a',   borderWidth: 1 },
+  // { label: 'הסיר מועמדות',    data: [7,  3,  1], backgroundColor: '#2a3045'   + 'cc', borderColor: '#3a4260',   borderWidth: 1 },
+];
+
+stackedDatasets.forEach(ds => { ds.borderRadius = 0; ds.borderSkipped = false; });
+
+new Chart(ctxLevels, {
+  type: 'bar',
+  data: {
+    labels: ["ג'וניור (n=36)", "א' (n=63)", "ב'/ג' (n=95)"],
+    datasets: stackedDatasets,
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        align: 'end',
+        labels: {
+          font: { size: 10, family: 'Heebo' },
+          boxWidth: 10, boxHeight: 10,
+          usePointStyle: true, pointStyle: 'rectRounded',
+          generateLabels(chart) {
+            return chart.data.datasets.map((ds, i) => ({
+              text: ds.label,
+              fillStyle: ds.borderColor,
+              strokeStyle: ds.borderColor,
+              fontColor: ds.borderColor,
+              lineWidth: 0,
+              datasetIndex: i,
+              hidden: false,
+            }));
+          }
+        }
+      },
       tooltip: {
         backgroundColor: '#141821',
         borderColor: '#1e2436',
         borderWidth: 1,
         titleColor: '#dde4f5',
         bodyColor: '#8892a4',
+        padding: 10,
         rtl: true,
         callbacks: {
-          label: ctx => ` ${ctx.parsed.x} מועמדים`
+          label: ctx => {
+            const total = ctx.chart.data.datasets.reduce((s, ds) => s + (ds.data[ctx.dataIndex] || 0), 0);
+            const pct = Math.round(ctx.parsed.y / total * 100);
+            return ` ${ctx.dataset.label}: ${ctx.parsed.y} (${pct}%)`;
+          }
         }
-      }
+      },
     },
     scales: {
       x: {
-        grid: { color: hexAlpha('#1e2436', 0.8) },
-        ticks: { color: COLORS.muted },
-        border: { color: '#1e2436' }
+        stacked: true,
+        grid: { display: false },
+        ticks: { color: '#dde4f5', font: { size: 11, weight: '600' } }
       },
       y: {
-        grid: { display: false },
-        ticks: { color: '#dde4f5', font: { size: 11 } },
-        border: { color: '#1e2436' }
+        stacked: true,
+        grid: { color: '#1e2436' },
+        ticks: { color: '#8892a4', font: { size: 10 } },
+        beginAtZero: true,
       }
-    }
+    },
+    animation: { duration: 900, easing: 'easeOutQuart' }
   }
 });
 
-// ── Chart 3: Pre-filter Doughnut ──────────────────────────────────
-const ctx3 = document.getElementById('chartFilter').getContext('2d');
-new Chart(ctx3, {
+
+/* ──────────────────────────────────────────────────────
+   CHART 3 — Early Filter Potential (Doughnut)
+────────────────────────────────────────────────────── */
+const ctxFilter = document.getElementById('chartFilter').getContext('2d');
+
+new Chart(ctxFilter, {
   type: 'doughnut',
   data: {
-    labels: ['פסילה מוקדמת אפשרית', 'דורש מעקב / Fast-track', 'תהליך תקין'],
+    labels: ['ניתן לסינון מוקדם', 'קשה לחיזוי', 'ללא מידע'],
     datasets: [{
-      data: [8, 14, 119],
+      data: [10, 5, 15],
       backgroundColor: [
-        hexAlpha(COLORS.FAIL, 0.8),
-        hexAlpha(COLORS.JR, 0.8),
-        hexAlpha(COLORS.A, 0.8),
+        COLORS.FAIL + 'cc',
+        COLORS.JR + 'cc',
+        '#1e2436',
       ],
-      borderColor: ['#0e1118'],
-      borderWidth: 3,
-      hoverOffset: 8,
+      borderColor: [COLORS.FAIL, COLORS.JR, '#2a3045'],
+      borderWidth: 2,
+      hoverOffset: 6,
     }]
   },
   options: {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     cutout: '68%',
     plugins: {
-      legend: {
-        position: 'bottom',
-        rtl: true,
-        labels: {
-          padding: 16,
-          color: '#8892a4',
-          font: { size: 10.5 },
-          usePointStyle: true,
-          pointStyleWidth: 8,
-        }
-      },
       tooltip: {
         backgroundColor: '#141821',
         borderColor: '#1e2436',
         borderWidth: 1,
         titleColor: '#dde4f5',
         bodyColor: '#8892a4',
-        rtl: true,
+        padding: 10,
         callbacks: {
-          label: ctx => ` ${ctx.parsed} מועמדים (${Math.round(ctx.parsed/141*100)}%)`
-        }
-      }
-    }
-  }
-});
-
-// ── Chart 2: Level Comparison — stacked per exam category ────────
-// Columns: ב'/ג'(96) | א'(30) | ג'וניור(38) | לא עבר(23) | תנאי(37)
-// Each column is stacked by interview outcome:
-//   ב'/ג' col  → 55 kept ב'/ג', 20 dropped to א', 21 dropped to ג'וניור/fail
-//   א'   col   → 22 kept א',   8  dropped to ג'וניור/fail
-//   ג'וניור col → 23 passed ג'וניור, 15 failed
-//   לא עבר col → 23 filtered (no interview)
-//   תנאי col   → 4 ב'/ג', 14 א', 9 ג'וניור, 10 failed
-
-const ctx2 = document.getElementById('chartLevels').getContext('2d');
-new Chart(ctx2, {
-  type: 'bar',
-  data: {
-    labels: ["ב'/ג' (96)", "א' (30)", "ג'וניור (38)", "לא עבר (23)", "תנאי (37)"],
-    datasets: [
-      {
-        label: "ראיון: ב'/ג'",
-        data: [55, 0, 0, 0, 4],
-        backgroundColor: hexAlpha(COLORS.BG, 0.78),
-        borderColor: COLORS.BG,
-        borderWidth: 1.5,
-        stack: 's',
-      },
-      {
-        label: "ראיון: א' (ירד מב'/ג') ⚠️",
-        data: [20, 0, 0, 0, 0],
-        backgroundColor: hexAlpha('#ff9f43', 0.88),
-        borderColor: '#ff9f43',
-        borderWidth: 2,
-        stack: 's',
-      },
-      {
-        label: "ראיון: א'",
-        data: [0, 22, 0, 0, 14],
-        backgroundColor: hexAlpha(COLORS.A, 0.78),
-        borderColor: COLORS.A,
-        borderWidth: 1.5,
-        stack: 's',
-      },
-      {
-        label: "ראיון: ג'וניור",
-        data: [0, 0, 23, 0, 9],
-        backgroundColor: hexAlpha(COLORS.JR, 0.78),
-        borderColor: COLORS.JR,
-        borderWidth: 1.5,
-        stack: 's',
-      },
-      {
-        label: "ראיון: לא עבר / ירד",
-        data: [21, 8, 15, 0, 10],
-        backgroundColor: hexAlpha(COLORS.FAIL, 0.68),
-        borderColor: COLORS.FAIL,
-        borderWidth: 1.5,
-        stack: 's',
-      },
-      {
-        label: "סוננו (לא הגיעו לראיון)",
-        data: [0, 0, 0, 23, 0],
-        backgroundColor: hexAlpha(COLORS.muted, 0.28),
-        borderColor: COLORS.muted,
-        borderWidth: 1,
-        stack: 's',
-      },
-    ]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'bottom',
-        rtl: true,
-        labels: {
-          padding: 12,
-          color: '#8892a4',
-          font: { size: 10.5 },
-          usePointStyle: true,
-          pointStyleWidth: 8,
+          label: ctx => ` ${ctx.parsed} מועמדים (${Math.round(ctx.parsed/30*100)}% מהכושלים)`,
         }
       },
-      tooltip: {
-        backgroundColor: '#141821',
-        borderColor: '#1e2436',
-        borderWidth: 1,
-        titleColor: '#dde4f5',
-        bodyColor: '#8892a4',
-        rtl: true,
-        callbacks: {
-          label: ctx => ctx.parsed.y > 0 ? ` ${ctx.dataset.label}: ${ctx.parsed.y} מועמדים` : null,
-          afterBody: ctxArr => {
-            const lbl = ctxArr[0]?.label || '';
-            if (lbl.includes("ב'/ג'")) return ['──────────────────', "⚠️  20 (21%) ירדו לא'", "✗  21 (22%) ירדו לג'וניור/נכשלו", "✓  55 (57%) שמרו על ב'/ג'"];
-            if (lbl.includes("תנאי"))  return ['──────────────────', "✓  4  עברו לב'/ג'", "✓  14 עברו לא'", "✓  9  עברו לג'וניור", "✗  10 לא עברו"];
-          }
-        }
-      }
     },
-    scales: {
-      x: {
-        stacked: true,
-        grid: { display: false },
-        ticks: { color: '#dde4f5', font: { size: 11 } },
-        border: { color: '#1e2436' }
-      },
-      y: {
-        stacked: true,
-        grid: { color: hexAlpha('#1e2436', 0.8) },
-        ticks: { color: COLORS.muted },
-        border: { color: '#1e2436' },
-        max: 100
-      }
+    animation: { duration: 900, animateRotate: true, animateScale: true }
+  },
+  plugins: [{
+    id: 'centerText',
+    afterDraw(chart) {
+      const { ctx, chartArea: { left, top, right, bottom } } = chart;
+      const cx = (left + right) / 2;
+      const cy = (top + bottom) / 2;
+      ctx.save();
+      ctx.font = 'bold 22px Heebo';
+      ctx.fillStyle = '#ff5f72';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('10', cx, cy - 9);
+      ctx.font = '11px Heebo';
+      ctx.fillStyle = '#8892a4';
+      ctx.fillText('מועמדים', cx, cy + 12);
+      ctx.restore();
     }
-  }
+  }]
 });
 
-// ── Live clock ────────────────────────────────────────────────────
-function updateDate() {
-  const d = new Date();
-  const s = d.toLocaleString('he-IL', {
-    day:'2-digit', month:'2-digit', year:'numeric',
-    hour:'2-digit', minute:'2-digit'
-  });
-  const el = document.querySelector('.header-date');
-  if (el) el.textContent = `עדכון: ${s}`;
+/* ──────────────────────────────────────────────────────
+   Action Items Toggle
+────────────────────────────────────────────────────── */
+function toggleCheck(el) {
+  el.classList.toggle('checked');
 }
-updateDate();
-setInterval(updateDate, 60000);
+
+/* ──────────────────────────────────────────────────────
+   Staggered entrance animation
+────────────────────────────────────────────────────── */
+(function() {
+  const allCards = document.querySelectorAll('.kpi-card, .chart-card, .funnel-step, .insights-card, .actions-card');
+  allCards.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = `opacity 0.5s ease ${i * 0.04}s, transform 0.5s ease ${i * 0.04}s`;
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 80 + i * 40);
+    });
+  });
+})();
 </script>
 </body>
 </html>
